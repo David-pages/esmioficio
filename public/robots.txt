@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /administracion
+Disallow: /perfil
+Disallow: /favoritos
+Disallow: /update-password
+
+Sitemap: https://esmioficio.mx/sitemap.xml

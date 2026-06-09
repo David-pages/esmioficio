@@ -1,0 +1,600 @@
+{
+  "brandName": "EsMiOficio",
+  "style": "Dark, moderno, profesional, local, limpio y orientado a confianza.",
+  "sourceFiles": [
+    "tailwind.config.cjs",
+    "index.html",
+    "index.css",
+    "components/Hero.tsx",
+    "components/Navbar.tsx",
+    "components/SearchResults.tsx",
+    "components/Categories.tsx",
+    "components/FeaturedPros.tsx",
+    "components/ClientDashboard.tsx",
+    "components/AdminDashboard.tsx",
+    "components/Footer.tsx",
+    "public/og-image.svg"
+  ],
+  "colors": {
+    "primary": "#E6B319",
+    "primaryHover": "#D4A415",
+    "secondary": "#2C2C2C",
+    "accent": "#16A34A",
+    "background": "#121212",
+    "surface": "#1E1E1E",
+    "surfaceAlt": "#2C2C2C",
+    "textPrimary": "#FFFFFF",
+    "textSecondary": "#9CA3AF",
+    "textMuted": "#6B7280",
+    "border": "#333333",
+    "success": "#22C55E",
+    "warning": "#FACC15",
+    "error": "#EF4444",
+    "info": "#60A5FA",
+    "overlay": "#000000CC",
+    "neutralHover": "#FFFFFF1A",
+    "primarySoft": "#E6B3191A",
+    "primaryBorderSoft": "#E6B31980"
+  },
+  "typography": {
+    "primaryFont": "Inter",
+    "secondaryFont": "Material Symbols Outlined for icons only",
+    "headingWeights": [
+      700,
+      800,
+      900
+    ],
+    "bodyWeights": [
+      300,
+      400,
+      500,
+      600,
+      700
+    ],
+    "sizes": {
+      "h1": "36px mobile / 60px desktop",
+      "h2": "24px-36px",
+      "h3": "18px-24px",
+      "body": "16px",
+      "small": "14px",
+      "caption": "12px",
+      "microLabel": "10px",
+      "button": "14px-16px"
+    },
+    "lineHeights": {
+      "body": "24px",
+      "small": "20px",
+      "h1Desktop": "60px",
+      "relaxed": "1.625"
+    }
+  },
+  "ui": {
+    "borderRadius": "8px buttons/inputs, 12px secondary cards, 16px primary cards, 24px hero/large panels, 9999px badges",
+    "shadowStyle": "Black shadows, mostly shadow-lg/shadow-2xl, often rgba(0,0,0,0.5); subtle primary glow in hero and CTAs.",
+    "buttonStyle": "Primary gold filled button with dark text, bold/black weight, hover gold-dark, active scale 0.95. Secondary buttons use dark surface, border and white/gray text.",
+    "cardStyle": "Dark carbon cards with #333333 border, 16px radius, compact metadata and hover border #E6B31980.",
+    "inputStyle": "Dark elevated inputs on #2C2C2C, #333333 border, white text, gray placeholder, focus border/ring #E6B319.",
+    "spacingStyle": "Mobile-first, dense but breathable, 12px-24px internal gaps, 64px-80px section rhythm.",
+    "badges": "Pill badges with uppercase micro labels, tinted backgrounds and strong text.",
+    "disabledState": "opacity 0.5 or 0.6 plus cursor-not-allowed where needed.",
+    "activeState": "scale 0.95 on several action buttons.",
+    "hoverState": "primary hover #D4A415; secondary hover #FFFFFF1A; cards hover border #E6B31980."
+  },
+  "icons": {
+    "iconLibrary": "Google Material Symbols Outlined",
+    "secondaryIconLibrary": "lucide-react",
+    "iconStyle": "Outlined, rounded, minimalista, geometric, mostly 400 weight and FILL 0.",
+    "defaultSize": "24px",
+    "defaultStrokeWidth": "Material font weight 400; Lucide default stroke 2",
+    "defaultColor": "#E6B319",
+    "iconsUsed": [
+      {
+        "name": "construction",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Navbar, Footer, Categorias",
+        "purpose": "Marca y oficio general",
+        "color": "#E6B319",
+        "size": "14px-30px",
+        "style": "outlined rounded"
+      },
+      {
+        "name": "dynamic_feed",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Navbar, JobBoard",
+        "purpose": "Proyectos y publicaciones",
+        "color": "#E6B319",
+        "size": "18px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "search",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Hero, SearchResults, AdminDashboard",
+        "purpose": "Busqueda",
+        "color": "#6B7280 focus #E6B319",
+        "size": "20px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "expand_more",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Selects",
+        "purpose": "Dropdown",
+        "color": "#6B7280",
+        "size": "24px",
+        "style": "outlined"
+      },
+      {
+        "name": "my_location",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Hero",
+        "purpose": "Usar ubicacion",
+        "color": "#E6B319",
+        "size": "18px",
+        "style": "outlined"
+      },
+      {
+        "name": "history",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Hero",
+        "purpose": "Busquedas recientes",
+        "color": "#D1D5DB",
+        "size": "10px",
+        "style": "outlined"
+      },
+      {
+        "name": "add_circle",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Hero, SearchResults, JobBoard",
+        "purpose": "Agregar, registrar o sugerir",
+        "color": "#E6B319",
+        "size": "18px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "plumbing",
+        "library": "Material Symbols Outlined",
+        "component": "constants.TRADES icon",
+        "section": "Categorias",
+        "purpose": "Plomero",
+        "color": "#60A5FA",
+        "size": "30px",
+        "style": "outlined"
+      },
+      {
+        "name": "electrical_services",
+        "library": "Material Symbols Outlined",
+        "component": "constants.TRADES icon",
+        "section": "Hero, Categorias",
+        "purpose": "Electricista",
+        "color": "#FACC15",
+        "size": "24px-30px",
+        "style": "outlined"
+      },
+      {
+        "name": "carpenter",
+        "library": "Material Symbols Outlined",
+        "component": "constants.TRADES icon",
+        "section": "Categorias",
+        "purpose": "Carpintero",
+        "color": "#D97706",
+        "size": "30px",
+        "style": "outlined"
+      },
+      {
+        "name": "car_repair",
+        "library": "Material Symbols Outlined",
+        "component": "constants.TRADES icon",
+        "section": "Categorias",
+        "purpose": "Mecanico",
+        "color": "#F87171",
+        "size": "30px",
+        "style": "outlined"
+      },
+      {
+        "name": "yard",
+        "library": "Material Symbols Outlined",
+        "component": "constants.TRADES icon",
+        "section": "Categorias",
+        "purpose": "Jardinero",
+        "color": "#4ADE80",
+        "size": "30px",
+        "style": "outlined"
+      },
+      {
+        "name": "format_paint",
+        "library": "Material Symbols Outlined",
+        "component": "constants.TRADES icon",
+        "section": "Hero, Categorias",
+        "purpose": "Pintor",
+        "color": "#C084FC",
+        "size": "24px-30px",
+        "style": "outlined"
+      },
+      {
+        "name": "roofing",
+        "library": "Material Symbols Outlined",
+        "component": "constants.TRADES icon",
+        "section": "Hero, Categorias",
+        "purpose": "Impermeabilizacion",
+        "color": "#93C5FD",
+        "size": "24px-30px",
+        "style": "outlined"
+      },
+      {
+        "name": "verified",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Cards profesionales, filtros, admin",
+        "purpose": "Verificacion",
+        "color": "#60A5FA",
+        "size": "18px-20px",
+        "style": "outlined, sometimes intended filled"
+      },
+      {
+        "name": "location_on",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Cards, ProfileView, FeaturedPros",
+        "purpose": "Ciudad y municipio",
+        "color": "#9CA3AF",
+        "size": "14px-18px",
+        "style": "outlined"
+      },
+      {
+        "name": "map",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Cards, MexicoFocus",
+        "purpose": "Estado, cobertura o mapa",
+        "color": "#E6B319",
+        "size": "14px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "shield",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "SearchResults",
+        "purpose": "Confianza",
+        "color": "#E6B319",
+        "size": "16px",
+        "style": "outlined"
+      },
+      {
+        "name": "schedule",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Cards, ProfileView",
+        "purpose": "Tiempo de respuesta o actividad",
+        "color": "#E6B319",
+        "size": "16px",
+        "style": "outlined"
+      },
+      {
+        "name": "payments",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Cards",
+        "purpose": "Precio aproximado",
+        "color": "#E6B319",
+        "size": "16px",
+        "style": "outlined"
+      },
+      {
+        "name": "favorite",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Navbar, SearchResults",
+        "purpose": "Favoritos y guardados",
+        "color": "#EF4444 active / #6B7280 inactive",
+        "size": "20px-24px",
+        "style": "outlined, sometimes intended filled"
+      },
+      {
+        "name": "compare_arrows",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "SearchResults",
+        "purpose": "Comparar profesionales",
+        "color": "#E6B319",
+        "size": "24px",
+        "style": "outlined"
+      },
+      {
+        "name": "chat",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "ContactModal, ProfileView",
+        "purpose": "Mensaje/contacto",
+        "color": "#E6B319",
+        "size": "18px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "forum",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "ClientDashboard, JobBoard",
+        "purpose": "Conversacion/contactos",
+        "color": "#E6B319",
+        "size": "20px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "perm_phone_msg",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "ProfileView",
+        "purpose": "Contacto telefonico o WhatsApp",
+        "color": "#E6B319",
+        "size": "20px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "rate_review",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "ProfileView, ClientDashboard",
+        "purpose": "Crear resena",
+        "color": "#E6B319",
+        "size": "18px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "reviews",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "ProfileView, ClientDashboard, AdminDashboard",
+        "purpose": "Listado de resenas",
+        "color": "#E6B319",
+        "size": "20px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "star emoji",
+        "library": "Unicode emoji",
+        "component": "StarRating",
+        "section": "Cards, ProfileView, dashboards",
+        "purpose": "Rating",
+        "color": "native emoji yellow",
+        "size": "14px-20px",
+        "style": "emoji filled"
+      },
+      {
+        "name": "security",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "AdminDashboard",
+        "purpose": "Acceso admin",
+        "color": "#EF4444",
+        "size": "36px",
+        "style": "outlined"
+      },
+      {
+        "name": "lock",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "AuthModal, Categorias",
+        "purpose": "Login/cerrajero",
+        "color": "#E6B319",
+        "size": "24px-30px",
+        "style": "outlined"
+      },
+      {
+        "name": "edit",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "ProfileView, ClientDashboard",
+        "purpose": "Editar datos",
+        "color": "#E6B319",
+        "size": "18px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "close",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "Modales, SearchResults",
+        "purpose": "Cerrar/quitar",
+        "color": "#6B7280",
+        "size": "18px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "delete",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "AdminDashboard",
+        "purpose": "Eliminar",
+        "color": "#EF4444",
+        "size": "20px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "task_alt",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "ProfileView, dashboards",
+        "purpose": "Completado/exito",
+        "color": "#22C55E",
+        "size": "20px-24px",
+        "style": "outlined"
+      },
+      {
+        "name": "bolt",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "ActivityFeed, ProfileView",
+        "purpose": "Actividad/urgencia",
+        "color": "#E6B319",
+        "size": "20px-30px",
+        "style": "outlined"
+      },
+      {
+        "name": "download",
+        "library": "Material Symbols Outlined",
+        "component": "span.material-symbols-outlined",
+        "section": "AdminDashboard",
+        "purpose": "Exportar datos",
+        "color": "#E6B319",
+        "size": "24px",
+        "style": "outlined"
+      },
+      {
+        "name": "MapPin",
+        "library": "lucide-react",
+        "component": "MapPin",
+        "section": "CategorySEOPage",
+        "purpose": "Ubicacion SEO",
+        "color": "#E6B319",
+        "size": "16px",
+        "style": "outline stroke 2"
+      },
+      {
+        "name": "CheckCircle",
+        "library": "lucide-react",
+        "component": "CheckCircle",
+        "section": "CategorySEOPage",
+        "purpose": "FAQ/check",
+        "color": "#E6B319",
+        "size": "24px",
+        "style": "outline stroke 2"
+      },
+      {
+        "name": "Shield",
+        "library": "lucide-react",
+        "component": "Shield",
+        "section": "CategorySEOPage",
+        "purpose": "Verificacion SEO",
+        "color": "#FFFFFF on #3B82F6",
+        "size": "16px",
+        "style": "outline stroke 2"
+      },
+      {
+        "name": "custom tool mark",
+        "library": "inline SVG",
+        "component": "public/og-image.svg",
+        "section": "Open Graph image",
+        "purpose": "Marca promocional",
+        "color": "#E6B319 and #121212",
+        "size": "84px mark",
+        "style": "solid geometric"
+      }
+    ],
+    "tradeIconSet": [
+      "plumbing",
+      "electrical_services",
+      "carpenter",
+      "construction",
+      "car_repair",
+      "yard",
+      "format_paint",
+      "build",
+      "lock",
+      "pest_control",
+      "roofing",
+      "ac_unit",
+      "window",
+      "chair",
+      "content_cut",
+      "pets",
+      "layers",
+      "architecture",
+      "smartphone",
+      "computer",
+      "local_shipping",
+      "cleaning_services",
+      "format_color_fill",
+      "restaurant",
+      "cake",
+      "waiter",
+      "photo_camera",
+      "pool",
+      "precision_manufacturing",
+      "tire_repair",
+      "local_car_wash",
+      "directions_car",
+      "medical_services",
+      "face",
+      "self_care",
+      "fitness_center",
+      "school"
+    ],
+    "recommendedAdIcons": [
+      {
+        "concept": "busqueda de profesionales",
+        "icon": "search",
+        "reason": "Es el icono principal del buscador de la web."
+      },
+      {
+        "concept": "ubicacion",
+        "icon": "location_on",
+        "reason": "Comunica ciudad, colonia y cercania local."
+      },
+      {
+        "concept": "confianza",
+        "icon": "shield",
+        "reason": "Refuerza seguridad y decision informada."
+      },
+      {
+        "concept": "resenas",
+        "icon": "rate_review",
+        "reason": "Conecta con reputacion y prueba social."
+      },
+      {
+        "concept": "oficio",
+        "icon": "construction",
+        "reason": "Es parte del logo y del lenguaje de oficios."
+      },
+      {
+        "concept": "WhatsApp/contacto",
+        "icon": "chat",
+        "reason": "Mantiene contacto directo sin depender de un logo externo."
+      },
+      {
+        "concept": "verificacion",
+        "icon": "verified",
+        "reason": "Es el indicador visual actual de profesionales validados."
+      },
+      {
+        "concept": "cliente",
+        "icon": "person",
+        "reason": "Es simple y consistente con Material Symbols."
+      },
+      {
+        "concept": "profesional",
+        "icon": "badge",
+        "reason": "Sugiere identidad, credencial y perfil profesional."
+      },
+      {
+        "concept": "servicio realizado",
+        "icon": "task_alt",
+        "reason": "Expresa trabajo completado y confianza."
+      },
+      {
+        "concept": "emergencia",
+        "icon": "bolt",
+        "reason": "Comunica urgencia sin saturar visualmente."
+      },
+      {
+        "concept": "favoritos/guardados",
+        "icon": "favorite",
+        "reason": "Ya se usa para guardar profesionales."
+      }
+    ]
+  },
+  "brandMood": [
+    "confianza local",
+    "profesionalismo practico",
+    "claridad operativa"
+  ],
+  "masterPrompt": "Crea una imagen promocional para EsMiOficio, una plataforma mexicana para encontrar profesionales de oficios confiables. Mantener identidad visual dark mode moderna: fondo carbon #121212, tarjetas en #1E1E1E, superficies secundarias #2C2C2C, bordes finos #333333, acento dorado #E6B319 y hover/acento secundario #D4A415. Usar tipografia estilo Inter, sans-serif, titulos bold/black, texto claro #FFFFFF y texto secundario #9CA3AF. Composicion limpia, profesional y mobile-first, con tarjetas de profesionales, rating, ubicacion y verificacion. Boton principal dorado con texto oscuro, boton de contacto verde #16A34A, badges pequenos redondeados y bordes suaves. Iconografia estilo Google Material Symbols Outlined: search, location_on, shield, verified, rate_review, construction, chat, task_alt, bolt, lineal, rounded, minimalista, usualmente en dorado. Transmitir confianza, cercania local, seguridad, transparencia y oficio profesional. Evitar fondos claros, colores pastel dominantes, exceso de gradientes o ilustraciones caricaturescas. La pieza debe sentirse como una extension natural de la web de EsMiOficio."
+}
