@@ -97,7 +97,7 @@ const RecentWorks: React.FC<RecentWorksProps> = ({ professional, isOwner }) => {
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(null);
-    const selected = Array.from(event.target.files || []);
+    const selected = Array.from<File>(event.target.files ?? []);
     if (selected.length === 0) return;
 
     try {

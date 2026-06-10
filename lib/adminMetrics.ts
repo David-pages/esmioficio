@@ -563,11 +563,12 @@ export const buildAdminMetrics = (
   const clientsWithHired = uniqueCount(hiredServices.map(request => request.client_id));
   const clientsWithReview = uniqueCount(reviewRows.map(review => review.author_id));
   const clientsWithSavedPros = data.savedProfessionals.available ? uniqueCount(savedRows.map(row => row.client_id)) : null;
+  const clientServiceCounts: Map<string, number> = serviceRows.reduce((map: Map<string, number>, request) => {
+    if (request.client_id) map.set(request.client_id, (map.get(request.client_id) || 0) + 1);
+    return map;
+  }, new Map<string, number>());
   const recurringClients = data.serviceRequests.available
-    ? Array.from(serviceRows.reduce((map, request) => {
-        if (request.client_id) map.set(request.client_id, (map.get(request.client_id) || 0) + 1);
-        return map;
-      }, new Map<string, number>()).values()).filter(count => count > 1).length
+    ? Array.from(clientServiceCounts.values()).filter(count => count > 1).length
     : null;
 
   const averageRating = reviewRows.length > 0

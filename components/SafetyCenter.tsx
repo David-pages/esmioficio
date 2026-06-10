@@ -105,7 +105,7 @@ const SafetyCenter: React.FC<SafetyCenterProps> = ({ professional, currentUser, 
 
   const handleEvidenceChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setStatusMessage(null);
-    const selected = Array.from(event.target.files || []);
+    const selected = Array.from<File>(event.target.files ?? []);
     if (selected.length === 0) return;
 
     try {

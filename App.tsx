@@ -71,6 +71,32 @@ const mergeProfessionals = (incoming: Professional[], existing: Professional[] =
   return Array.from(byId.values());
 };
 
+const NotFoundPage: React.FC<{ onGoHome: () => void; onSearch: () => void }> = ({ onGoHome, onSearch }) => (
+  <div className="flex min-h-[70vh] items-center justify-center bg-background px-4">
+    <div className="max-w-md text-center">
+      <p className="mb-2 text-7xl font-extrabold text-primary">404</p>
+      <h1 className="mb-2 text-2xl font-extrabold text-white">Pagina no encontrada</h1>
+      <p className="mb-6 text-sm text-gray-400">
+        La pagina que buscas no existe o cambio de direccion. Puedes volver al inicio o buscar un profesional.
+      </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+        <button
+          onClick={onGoHome}
+          className="rounded-xl bg-primary px-6 py-3 font-bold text-background transition-opacity hover:opacity-90"
+        >
+          Ir al inicio
+        </button>
+        <button
+          onClick={onSearch}
+          className="rounded-xl border border-border bg-surface px-6 py-3 font-bold text-white transition-colors hover:border-primary/50"
+        >
+          Buscar profesionales
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 const FullPageLoader: React.FC<{ message?: string }> = ({ message = 'Cargando...' }) => (
   <div className="flex min-h-[60vh] items-center justify-center bg-background px-4">
     <div className="text-center">
@@ -1236,7 +1262,7 @@ const App: React.FC = () => {
         text: cleanText
       };
 
-      const saveReview = async (includeImages: boolean) => {
+      const saveReview = async (includeImages: boolean): Promise<{ data: any; error: any }> => {
         const payload = includeImages
           ? { ...reviewPayload, images: reviewImages }
           : reviewPayload;
@@ -1489,11 +1515,18 @@ const App: React.FC = () => {
   };
 
   const handleAdminLogin = (password: string) => {
-    if (password === 'admin123') {
+    // La contraseña vive en .env.local (VITE_ADMIN_PASSWORD), nunca en el código.
+    // Nota: esto solo oculta la UI; la protección real de los datos debe estar en las
+    // políticas RLS de Supabase, porque cualquier código del navegador es público.
+    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+    if (adminPassword && password === adminPassword) {
       setIsAdminAuthenticated(true);
       sessionStorage.setItem('esmiOficio_admin', 'true');
       showToast('Sesión de administrador iniciada', 'info');
       return true;
+    }
+    if (!adminPassword) {
+      showToast('Falta configurar VITE_ADMIN_PASSWORD en .env.local', 'error');
     }
     return false;
   };
@@ -1821,7 +1854,13 @@ const App: React.FC = () => {
           onToggleVerification={handleToggleVerification}
           onNotifyPro={handleNotifyPro}
           onDeleteReview={handleDeleteReview}
-          onSeedData={() => seedTestUsers(handleRegisterPro)}
+          onSeedData={async () => {
+            if (!import.meta.env.DEV) {
+              showToast('La carga de datos de prueba solo esta disponible en desarrollo.', 'error');
+              return;
+            }
+            await seedTestUsers(handleRegisterPro);
+          }}
         />
         <ToastContainer notifications={notifications} onRemove={removeToast} />
       </>
@@ -2077,10 +2116,16 @@ const App: React.FC = () => {
           <Route path="/blog/:slug" element={<BlogPostSEOPage />} />
           <Route path="/update-password" element={<UpdatePassword />} />
           <Route path="/proyectos" element={
-            <JobBoard 
-              user={user} 
-              onLoginRequest={() => setModal('LOGIN')} 
-              showToast={showToast} 
+            <JobBoard
+              user={user}
+              onLoginRequest={() => setModal('LOGIN')}
+              showToast={showToast}
+            />
+          } />
+          <Route path="*" element={
+            <NotFoundPage
+              onGoHome={handleBackToHome}
+              onSearch={() => setView('SEARCH')}
             />
           } />
         </Routes>

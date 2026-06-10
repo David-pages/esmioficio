@@ -140,6 +140,11 @@ const JobBoard: React.FC<JobBoardProps> = ({ user, onLoginRequest, showToast }) 
     return acc;
   }, {});
 
+  const topOpenStates = Object.keys(openPostsByState)
+    .map(stateName => ({ stateName, count: openPostsByState[stateName] }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6);
+
   return (
     <div className="py-12 min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4">
@@ -234,9 +239,9 @@ const JobBoard: React.FC<JobBoardProps> = ({ user, onLoginRequest, showToast }) 
           </select>
         </div>
 
-        {Object.keys(openPostsByState).length > 0 && (
+        {topOpenStates.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-8">
-            {Object.entries(openPostsByState).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([stateName, count]) => (
+            {topOpenStates.map(({ stateName, count }) => (
               <button
                 key={stateName}
                 onClick={() => {
