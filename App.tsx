@@ -21,6 +21,7 @@ const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const TermsConditions = lazy(() => import('./components/TermsConditions'));
 const AboutUs = lazy(() => import('./components/AboutUs'));
+const Contact = lazy(() => import('./components/Contact'));
 const Blog = lazy(() => import('./components/Blog'));
 const JobBoard = lazy(() => import('./components/JobBoard'));
 const UpdatePassword = lazy(() => import('./components/UpdatePassword'));
@@ -43,7 +44,7 @@ import {
   recordClientContactEvent
 } from './lib/trust';
 
-type ViewState = 'HOME' | 'SEARCH' | 'PROFILE' | 'PRIVACY' | 'TERMS' | 'ABOUT' | 'BLOG' | 'FAVORITES' | 'JOBBOARD' | 'CLIENT_DASHBOARD';
+type ViewState = 'HOME' | 'SEARCH' | 'PROFILE' | 'PRIVACY' | 'TERMS' | 'ABOUT' | 'CONTACT_PAGE' | 'BLOG' | 'FAVORITES' | 'JOBBOARD' | 'CLIENT_DASHBOARD';
 type ModalState = 'LOGIN' | 'REGISTER' | 'PRO_REGISTER' | 'SUGGEST_TRADE' | 'CONTACT' | null;
 
 const mergeProfessionals = (incoming: Professional[], existing: Professional[] = []) => {
@@ -261,6 +262,7 @@ const App: React.FC = () => {
       case 'PRIVACY': navigate('/privacidad'); break;
       case 'TERMS': navigate('/terminos'); break;
       case 'ABOUT': navigate('/nosotros'); break;
+      case 'CONTACT_PAGE': navigate('/contacto'); break;
       case 'BLOG': navigate('/blog'); break;
       case 'CLIENT_DASHBOARD': navigate('/mi-actividad'); break;
       default: navigate('/'); break;
@@ -1839,6 +1841,11 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  const goToContact = () => {
+    setView('CONTACT_PAGE');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   if (view === '/admin' || view === '/administracion') {
     return (
       <>
@@ -2112,6 +2119,7 @@ const App: React.FC = () => {
           <Route path="/privacidad" element={<PrivacyPolicy onBack={handleBackToHome} />} />
           <Route path="/terminos" element={<TermsConditions onBack={handleBackToHome} />} />
           <Route path="/nosotros" element={<AboutUs onBack={handleBackToHome} onRegisterClick={() => setModal('PRO_REGISTER')} />} />
+          <Route path="/contacto" element={<Contact onBack={handleBackToHome} />} />
           <Route path="/blog" element={<Blog onBack={handleBackToHome} />} />
           <Route path="/blog/:slug" element={<BlogPostSEOPage />} />
           <Route path="/update-password" element={<UpdatePassword />} />
@@ -2138,6 +2146,7 @@ const App: React.FC = () => {
         onTermsClick={goToTerms}
         onAboutClick={goToAbout}
         onBlogClick={goToBlog}
+        onContactClick={goToContact}
       />
 
       <ToastContainer notifications={notifications} onRemove={removeToast} />
