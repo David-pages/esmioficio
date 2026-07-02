@@ -11,6 +11,8 @@ import Footer from './components/Footer';
 import ToastContainer from './components/Toast';
 import SEOHelmet from './components/SEOHelmet';
 import ActivityFeed from './components/ActivityFeed';
+import ScrollWorkShowcase from './components/ScrollWorkShowcase';
+import Reveal from './components/Reveal';
 
 const AuthModal = lazy(() => import('./components/AuthModal'));
 const ContactModal = lazy(() => import('./components/ContactModal'));
@@ -24,16 +26,20 @@ const AboutUs = lazy(() => import('./components/AboutUs'));
 const Blog = lazy(() => import('./components/Blog'));
 const JobBoard = lazy(() => import('./components/JobBoard'));
 const UpdatePassword = lazy(() => import('./components/UpdatePassword'));
+const AuthCallback = lazy(() => import('./components/AuthCallback'));
 const CategorySEOPage = lazy(() => import('./components/CategorySEOPage'));
 const ProfileSEOPage = lazy(() => import('./components/ProfileSEOPage'));
 const BlogPostSEOPage = lazy(() => import('./components/BlogPostSEOPage'));
 const ReportProfessionalPage = lazy(() => import('./components/ReportProfessionalPage'));
 const ClientDashboard = lazy(() => import('./components/ClientDashboard'));
+const ContactPage = lazy(() => import('./components/ContactPage'));
 import { MEXICO_LOCATIONS, PROFESSIONALS_DATA, TRADES as INITIAL_TRADES } from './constants';
 import { ClientProfileUpdate, SearchFilters, Professional, Review, TradeRequest, TradeCategory, ToastNotification, User } from './types';
-import { supabase } from './lib/supabaseClient';
+import { isSupabaseConfigured, supabase } from './lib/supabaseClient';
+import { adminWhatsAppNumber, hasAdminWhatsAppNumber } from './lib/adminContact';
 import { recordAnalyticsEvent } from './lib/analytics';
 import { seedTestUsers } from './lib/seedData';
+import { getAbsoluteUrl, getSiteUrl } from './lib/siteUrl';
 import {
   buildWhatsAppMessage,
   getProfessionalCity,
@@ -43,7 +49,7 @@ import {
   recordClientContactEvent
 } from './lib/trust';
 
-type ViewState = 'HOME' | 'SEARCH' | 'PROFILE' | 'PRIVACY' | 'TERMS' | 'ABOUT' | 'BLOG' | 'FAVORITES' | 'JOBBOARD' | 'CLIENT_DASHBOARD';
+type ViewState = 'HOME' | 'SEARCH' | 'PROFILE' | 'PRIVACY' | 'TERMS' | 'ABOUT' | 'BLOG' | 'CONTACT' | 'FAVORITES' | 'JOBBOARD' | 'CLIENT_DASHBOARD';
 type ModalState = 'LOGIN' | 'REGISTER' | 'PRO_REGISTER' | 'SUGGEST_TRADE' | 'CONTACT' | null;
 
 const mergeProfessionals = (incoming: Professional[], existing: Professional[] = []) => {
@@ -114,6 +120,7 @@ const LoginRequired: React.FC<{ onLoginRequest: () => void }> = ({ onLoginReques
   return <FullPageLoader message="Abriendo inicio de sesion..." />;
 };
 
+
 const REVIEW_COLUMNS = 'id, author_id, author_name, rating, text, images, created_at';
 const LEGACY_REVIEW_COLUMNS = 'id, author_id, author_name, rating, text, created_at';
 const PROFESSIONAL_PUBLIC_COLUMNS = 'id,name,trade,location,municipality,state,rating,reviews_count,image_url,cover_image_url,portfolio_images,verified,description,years_experience,last_sensitive_update,response_time_minutes,coverage_zones,services,starting_price,last_active_at,jobs_count,recommendations_count,trust_status,verification_level';
@@ -164,11 +171,13 @@ const loadPublicProfessionals = async () => {
     if (!legacyViewResponse.error) return legacyViewResponse;
   }
 
-  const tableFallbackResponse = await supabase
-    .from('professionals')
-    .select(PROFESSIONAL_LEGACY_COLUMNS);
+  return response;
+};
 
-  return tableFallbackResponse.error ? response : tableFallbackResponse;
+const userHasAdminRole = async () => {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) return false;
+  return user.app_metadata?.role === 'admin';
 };
 
 const mapReviewRow = (row: any): Review => ({
@@ -207,16 +216,17 @@ const App: React.FC = () => {
   const location = useLocation();
   const view = location.pathname;
   const [searchParams] = useSearchParams();
+  const siteUrl = getSiteUrl();
   const homeJsonLd = [
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "EsMiOficio",
-      "url": "https://esmioficio.mx/",
+      "url": `${siteUrl}/`,
       "inLanguage": "es-MX",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://esmioficio.mx/buscar?q={search_term_string}",
+        "target": `${siteUrl}/buscar?q={search_term_string}`,
         "query-input": "required name=search_term_string"
       }
     },
@@ -224,18 +234,21 @@ const App: React.FC = () => {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "EsMiOficio",
-      "url": "https://esmioficio.mx/",
-      "logo": "https://esmioficio.mx/og-image.svg",
+      "url": `${siteUrl}/`,
+      "logo": getAbsoluteUrl('/og-image.svg'),
       "areaServed": {
         "@type": "Country",
-        "name": "Morelia, Michoacan"
+        "name": "México"
       }
     },
     {
       "@context": "https://schema.org",
       "@type": "Service",
-      "name": "Buro de Confianza de oficios en Morelia",
-      "areaServed": "Morelia, Michoacan",
+      "name": "Plataforma nacional de profesionales de oficio en México",
+      "areaServed": {
+        "@type": "Country",
+        "name": "México"
+      },
       "provider": {
         "@type": "Organization",
         "name": "EsMiOficio"
@@ -262,6 +275,7 @@ const App: React.FC = () => {
       case 'TERMS': navigate('/terminos'); break;
       case 'ABOUT': navigate('/nosotros'); break;
       case 'BLOG': navigate('/blog'); break;
+      case 'CONTACT': navigate('/contacto'); break;
       case 'CLIENT_DASHBOARD': navigate('/mi-actividad'); break;
       default: navigate('/'); break;
     }
@@ -412,7 +426,7 @@ const App: React.FC = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       window.setTimeout(() => {
-        syncAuthSession(event, session, event === 'SIGNED_IN');
+        syncAuthSession(event, session, event === 'SIGNED_IN' && window.location.pathname !== '/auth/callback');
       }, 0);
 
     });
@@ -433,7 +447,7 @@ const App: React.FC = () => {
 
     const metadataRole = metadata?.role;
     const finalRole = normalizeAppRole(profile?.role || metadataRole || 'USER');
-    const finalName = profile?.name || metadata?.name || email.split('@')[0];
+    const finalName = profile?.name || metadata?.name || metadata?.full_name || email.split('@')[0];
 
     const resolvedUser: User = {
       id: userId,
@@ -511,6 +525,13 @@ const App: React.FC = () => {
     const loadInitialData = async () => {
       setProfessionalsLoaded(false);
       setProfessionalsLoadError(null);
+
+      if (!isSupabaseConfigured) {
+        setProfessionals(prev => prev.length > 0 ? prev : PROFESSIONALS_DATA);
+        setProfessionalsLoaded(true);
+        return;
+      }
+
       try {
         // Profesionales
         const { data: pros, error: prosErr } = await loadPublicProfessionals();
@@ -687,7 +708,7 @@ const App: React.FC = () => {
   }, [favorites, user?.id]);
 
   // Admin State
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => sessionStorage.getItem('esmiOficio_admin') === 'true');
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   // Helper for Toasts
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
@@ -863,6 +884,8 @@ const App: React.FC = () => {
 
     localStorage.removeItem('esmiOficio_pending_contact');
     localStorage.removeItem('esmiOficio_pending_quote');
+    localStorage.removeItem('esmiOficio_pending_pro_registration');
+    localStorage.removeItem('esmiOficio_oauth_intent');
     localStorage.removeItem('esmiOficio_detected_city');
     sessionStorage.removeItem('esmiOficio_admin');
 
@@ -1459,10 +1482,14 @@ const App: React.FC = () => {
         trade: data.trade || pro?.trade || null
       });
 
-      // Abrir WhatsApp de Soporte
-      const supportPhone = "523346179157";
+      if (!hasAdminWhatsAppNumber) {
+        showToast('Servicio confirmado, pero el WhatsApp administrativo no esta configurado.', 'info');
+        window.dispatchEvent(new Event('dashboardUpdated'));
+        return;
+      }
+
       const message = `Hola EsMiOficio, acabo de confirmar el servicio con el profesional (Solicitud ID: ${requestId}). Puede comenzar el seguimiento.`;
-      const url = `https://wa.me/${supportPhone}?text=${encodeURIComponent(message)}`;
+      const url = `https://wa.me/${adminWhatsAppNumber}?text=${encodeURIComponent(message)}`;
       
       showToast('¡Servicio confirmado! Iniciando protocolo de seguimiento VIP...', 'success');
       window.open(url, '_blank');
@@ -1514,26 +1541,20 @@ const App: React.FC = () => {
     showToast("Solicitud enviada al administrador.", 'success');
   };
 
-  const handleAdminLogin = (password: string) => {
-    // La contraseña vive en .env.local (VITE_ADMIN_PASSWORD), nunca en el código.
-    // Nota: esto solo oculta la UI; la protección real de los datos debe estar en las
-    // políticas RLS de Supabase, porque cualquier código del navegador es público.
-    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-    if (adminPassword && password === adminPassword) {
+  const handleAdminLogin = async () => {
+    const isAdmin = await userHasAdminRole();
+    if (isAdmin) {
       setIsAdminAuthenticated(true);
-      sessionStorage.setItem('esmiOficio_admin', 'true');
       showToast('Sesión de administrador iniciada', 'info');
       return true;
     }
-    if (!adminPassword) {
-      showToast('Falta configurar VITE_ADMIN_PASSWORD en .env.local', 'error');
-    }
+    setIsAdminAuthenticated(false);
+    showToast('Inicia sesion con una cuenta administradora', 'error');
     return false;
   };
 
   const handleAdminExit = () => {
     setIsAdminAuthenticated(false);
-    sessionStorage.removeItem('esmiOficio_admin');
     handleBackToHome();
   };
 
@@ -1839,6 +1860,11 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  const goToContact = () => {
+    setView('CONTACT');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   if (view === '/admin' || view === '/administracion') {
     return (
       <>
@@ -1896,9 +1922,9 @@ const App: React.FC = () => {
           <Route path="/" element={
             <>
             <SEOHelmet
-              title="EsMiOficio - Profesionales confiables en Morelia"
-              description="Encuentra albaniles, plomeros, electricistas, mecanicos y otros profesionales en Morelia. Revisa trabajos recientes, senales de confianza y contacta por WhatsApp con mas seguridad."
-              canonicalUrl="https://esmioficio.mx/"
+              title="EsMiOficio - Profesionales confiables en todo México"
+              description="Encuentra y compara albañiles, plomeros, electricistas, mecánicos y profesionales de oficio en todo México. Revisa perfiles, reseñas y trabajos antes de contactar."
+              canonicalUrl={`${siteUrl}/`}
               jsonLd={homeJsonLd}
             />
             <Hero 
@@ -1911,8 +1937,10 @@ const App: React.FC = () => {
               onViewAll={() => handleSearch('', 'all', 'all')}
             />
             <ActivityFeed />
+            <ScrollWorkShowcase />
             <FeaturedPros onViewProfile={handleViewProfile} onContact={handleContact} professionals={professionals} />
             <section className="px-4 py-10">
+              <Reveal>
               <div className="mx-auto max-w-5xl rounded-2xl border border-primary/20 bg-primary/5 p-6 md:p-8">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
                   <div>
@@ -1928,6 +1956,7 @@ const App: React.FC = () => {
                 </div>
                 <p className="mt-5 text-sm font-bold text-primary">EsMiOficio: El Buro de Confianza de los oficios en Morelia.</p>
               </div>
+              </Reveal>
             </section>
             <MexicoFocus
               trades={trades}
@@ -2099,6 +2128,29 @@ const App: React.FC = () => {
               incomingRequests={incomingRequests}
             />
           } />
+          <Route path="/perfil/:slug" element={
+            <ProfileSEOPage
+              professionals={professionals}
+              isLoading={!professionalsLoaded}
+              onBack={() => setView('SEARCH')}
+              onContact={handleContact}
+              onAddReview={handleAddReview}
+              isLoggedIn={!!user}
+              onLoginRequest={() => setModal('LOGIN')}
+              currentUser={user}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+              onShare={(msg) => showToast(msg, 'info')}
+              onUpdateProfile={handleUpdateProfile}
+              onHire={handleHireManual}
+              serviceRequest={activeServiceRequest}
+              onRequestQuote={handleRequestQuote}
+              onAcceptQuote={handleAcceptQuote}
+              onConfirmService={handleConfirmService}
+              onCompleteService={handleCompleteService}
+              incomingRequests={incomingRequests}
+            />
+          } />
 
           <Route path="/reportar/:professionalId" element={
             <ReportProfessionalPage
@@ -2112,9 +2164,11 @@ const App: React.FC = () => {
           <Route path="/privacidad" element={<PrivacyPolicy onBack={handleBackToHome} />} />
           <Route path="/terminos" element={<TermsConditions onBack={handleBackToHome} />} />
           <Route path="/nosotros" element={<AboutUs onBack={handleBackToHome} onRegisterClick={() => setModal('PRO_REGISTER')} />} />
+          <Route path="/contacto" element={<ContactPage onBack={handleBackToHome} />} />
           <Route path="/blog" element={<Blog onBack={handleBackToHome} />} />
           <Route path="/blog/:slug" element={<BlogPostSEOPage />} />
           <Route path="/update-password" element={<UpdatePassword />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/proyectos" element={
             <JobBoard
               user={user}
@@ -2138,6 +2192,7 @@ const App: React.FC = () => {
         onTermsClick={goToTerms}
         onAboutClick={goToAbout}
         onBlogClick={goToBlog}
+        onContactClick={goToContact}
       />
 
       <ToastContainer notifications={notifications} onRemove={removeToast} />

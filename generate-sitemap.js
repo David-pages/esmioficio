@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Define tus rutas estáticas y dinámicas aquí
-const SITE_URL = 'https://esmioficio.mx';
+const SITE_URL = (process.env.VITE_SITE_URL || 'https://esmioficio.com').replace(/\/+$/, '');
 
 // Rutas estáticas
 const staticRoutes = [

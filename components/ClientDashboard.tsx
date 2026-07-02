@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ClientProfileUpdate, Professional, Review, User } from '../types';
 import { supabase } from '../lib/supabaseClient';
 import SEOHelmet from './SEOHelmet';
+import { getAbsoluteUrl } from '../lib/siteUrl';
 import StarRating from './StarRating';
 
 type ServiceRequestRow = {
@@ -257,7 +258,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       <SEOHelmet
         title="Mi actividad | EsMiOficio"
         description="Consulta tu actividad como cliente en EsMiOficio: servicios, contactos, resenas y profesionales guardados."
-        canonicalUrl="https://esmioficio.mx/mi-actividad"
+        canonicalUrl={getAbsoluteUrl('/mi-actividad')}
       />
 
       <div className="min-h-screen bg-background px-4 py-6 sm:px-6 lg:px-8">

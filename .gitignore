@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 .claude/settings.local.json
+
+# Variables de entorno (solo .env.example se sube al repo)
+.env
+.env.production
+profile-mobile-check.png
 playwright-report/
 test-results/
 
@@ -25,3 +30,5 @@ test-results/
 *.njsproj
 *.sln
 *.sw?
+
+.vercel

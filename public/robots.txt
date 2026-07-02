@@ -6,4 +6,4 @@ Disallow: /perfil
 Disallow: /favoritos
 Disallow: /update-password
 
-Sitemap: https://esmioficio.mx/sitemap.xml
+Sitemap: https://esmioficio.com/sitemap.xml

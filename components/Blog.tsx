@@ -1,19 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BLOG_POSTS } from './BlogPostSEOPage';
 import SEOHelmet from './SEOHelmet';
+import { getAbsoluteUrl } from '../lib/siteUrl';
+import { BlogPostView, loadPublishedBlogPosts } from '../lib/blog';
 
 interface BlogProps {
   onBack: () => void;
 }
 
 const Blog: React.FC<BlogProps> = ({ onBack }) => {
+  const [dynamicPosts, setDynamicPosts] = useState<BlogPostView[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    loadPublishedBlogPosts()
+      .then(posts => { if (active) setDynamicPosts(posts); })
+      .catch(error => console.error('No se pudieron cargar las publicaciones:', error))
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  const posts = [...dynamicPosts, ...BLOG_POSTS.filter(post => !dynamicPosts.some(dynamic => dynamic.id === post.id))];
+
   return (
     <>
       <SEOHelmet 
         title="Blog EsMiOficio | Consejos y Guías"
         description="Encuentra los mejores consejos, guías de precios y recomendaciones para el mantenimiento y reparación de tu hogar o negocio en Michoacán."
-        canonicalUrl="https://esmioficio.mx/blog"
+        canonicalUrl={getAbsoluteUrl('/blog')}
       />
       <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="mx-auto max-w-7xl">
@@ -32,7 +48,8 @@ const Blog: React.FC<BlogProps> = ({ onBack }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {BLOG_POSTS.map((post) => (
+            {loading && <div className="col-span-full rounded-2xl border border-border bg-surface p-8 text-center text-sm text-gray-500">Actualizando publicaciones...</div>}
+            {!loading && posts.map((post) => (
               <Link 
                 key={post.id} 
                 to={`/blog/${post.id}`}

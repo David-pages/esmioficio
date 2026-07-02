@@ -1,8 +1,8 @@
 -- EsMiOficio production fixes for auth/profile/storage/listing/client dashboard.
 -- Run in Supabase SQL Editor after backing up the project.
 -- Auth email redirects are configured in Supabase Dashboard, not SQL:
--- Site URL: https://esmioficio.mx
--- Additional Redirect URLs: https://esmioficio.mx/update-password and local dev URL/update-password.
+-- Site URL: https://esmioficio.com
+-- Additional Redirect URLs: https://esmioficio.com/** and local dev URL/update-password.
 
 create extension if not exists pgcrypto;
 

@@ -3,6 +3,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import SEOHelmet from './SEOHelmet';
 import { Professional, User, Review } from '../types';
 import ProfileView from './ProfileView';
+import { getProfileSlug, getProfileUrl } from '../lib/profileUrl';
 
 interface ProfileSEOPageProps {
   professionals: Professional[];
@@ -29,18 +30,10 @@ interface ProfileSEOPageProps {
 
 const ProfileSEOPage: React.FC<ProfileSEOPageProps> = (props) => {
   const { slug } = useParams<{ slug: string }>(); // ej: juan-perez-plomeria-morelia
-  const toSlug = (value: string) => value
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  
   // Encontrar al profesional basado en el slug. 
   // Asumimos que el slug se genera combinando: nombre-oficio-ciudad
   const professional = props.professionals.find(p => {
-    const pSlug = `${toSlug(p.name)}-${toSlug(p.trade)}-${toSlug(p.municipality || 'morelia')}`;
-    return pSlug === slug;
+    return getProfileSlug(p) === slug;
   });
 
   if (!professional) {
@@ -62,13 +55,19 @@ const ProfileSEOPage: React.FC<ProfileSEOPageProps> = (props) => {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": "ProfessionalService",
+    "@id": `${getProfileUrl(professional)}#professional-service`,
+    "url": getProfileUrl(professional),
     "name": professional.name,
     "image": [
       professional.imageUrl,
       ...(professional.portfolioImages || [])
     ],
     "description": professional.description,
+    "serviceType": professional.services?.length ? professional.services : [professional.trade],
+    "areaServed": professional.coverageZones?.length
+      ? professional.coverageZones.map(name => ({ "@type": "AdministrativeArea", name }))
+      : [{ "@type": "Country", "name": "México" }],
     "address": {
       "@type": "PostalAddress",
       "addressLocality": professional.municipality,
@@ -87,7 +86,8 @@ const ProfileSEOPage: React.FC<ProfileSEOPageProps> = (props) => {
       <SEOHelmet 
         title={title} 
         description={description}
-        canonicalUrl={`https://esmioficio.mx/oficio/${slug}`}
+        canonicalUrl={getProfileUrl(professional)}
+        type="profile"
         jsonLd={jsonLd}
       />
       <ProfileView 

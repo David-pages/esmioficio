@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .admin-blog-input {
+    @apply w-full rounded-xl border border-border bg-background/70 px-4 py-3 text-white outline-none transition-colors placeholder:text-gray-600 focus:border-primary focus:ring-1 focus:ring-primary;
+  }
+}
+
 body {
   background-color: #121212;
   color: white;
@@ -11,11 +17,46 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+/* Aparicion suave al hacer scroll (componente Reveal) */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 img,
 video {
   max-width: 100%;
+}
+
+.parallax-image {
+  contain: paint;
+  backface-visibility: hidden;
+}
+
+.parallax-image__media {
+  display: block;
+  min-height: 100%;
+  backface-visibility: hidden;
 }
 
 @media (max-width: 640px) {

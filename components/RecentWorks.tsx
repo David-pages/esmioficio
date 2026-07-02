@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Professional, RecentWork } from '../types';
 import { compressImageToWebP, mapRecentWorkRow } from '../lib/trust';
 import { supabase } from '../lib/supabaseClient';
+import ParallaxImage from './ParallaxImage';
 
 interface RecentWorksProps {
   professional: Professional;
@@ -266,15 +267,18 @@ const RecentWorks: React.FC<RecentWorksProps> = ({ professional, isOwner }) => {
             <article key={work.id} className="rounded-2xl bg-surface-light/30 border border-border overflow-hidden">
               <div className="grid grid-cols-2 gap-1 bg-surface">
                 {work.imageUrls.slice(0, 4).map((url, index) => (
-                  <img
+                  <ParallaxImage
                     key={`${work.id}-${index}`}
                     src={url}
                     alt={`${work.title} ${index + 1}`}
                     loading="lazy"
+                    intensity="soft"
+                    radius="soft"
                     onError={(event) => {
-                      event.currentTarget.style.display = 'none';
+                      const frame = event.currentTarget.closest('figure');
+                      if (frame instanceof HTMLElement) frame.style.display = 'none';
                     }}
-                    className="h-36 w-full object-cover bg-surface-light"
+                    className="h-36 w-full bg-surface-light"
                   />
                 ))}
               </div>
@@ -284,13 +288,13 @@ const RecentWorks: React.FC<RecentWorksProps> = ({ professional, isOwner }) => {
                     {work.beforeImageUrls?.[0] && (
                       <div>
                         <p className="text-[10px] uppercase font-bold text-gray-500 mb-1">Antes</p>
-                        <img src={work.beforeImageUrls[0]} alt={`Antes de ${work.title}`} className="h-24 w-full object-cover rounded-lg bg-surface" />
+                        <ParallaxImage src={work.beforeImageUrls[0]} alt={`Antes de ${work.title}`} intensity="soft" radius="soft" className="h-24 w-full rounded-lg bg-surface" />
                       </div>
                     )}
                     {work.afterImageUrls?.[0] && (
                       <div>
                         <p className="text-[10px] uppercase font-bold text-gray-500 mb-1">Despues</p>
-                        <img src={work.afterImageUrls[0]} alt={`Despues de ${work.title}`} className="h-24 w-full object-cover rounded-lg bg-surface" />
+                        <ParallaxImage src={work.afterImageUrls[0]} alt={`Despues de ${work.title}`} intensity="soft" radius="soft" className="h-24 w-full rounded-lg bg-surface" />
                       </div>
                     )}
                   </div>

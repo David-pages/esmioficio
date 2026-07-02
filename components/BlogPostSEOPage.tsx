@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import SEOHelmet from './SEOHelmet';
+import { getAbsoluteUrl } from '../lib/siteUrl';
+import { BlogPostView, loadPublishedBlogPost } from '../lib/blog';
 
 // Reubicamos los posts aquí o los exportamos de un archivo central.
 // Para mantener todo funcional, los definiremos aquí.
@@ -119,7 +121,26 @@ Una vez que te entreguen el trabajo, revisa minuciosamente. Abre y cierra puerta
 
 const BlogPostSEOPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const post = BLOG_POSTS.find(p => p.id === slug);
+  const staticPost = BLOG_POSTS.find(p => p.id === slug);
+  const [dynamicPost, setDynamicPost] = useState<BlogPostView | null>(null);
+  const [loading, setLoading] = useState(!staticPost);
+
+  useEffect(() => {
+    if (!slug || staticPost) { setLoading(false); return; }
+    let active = true;
+    setLoading(true);
+    loadPublishedBlogPost(slug)
+      .then(post => { if (active) setDynamicPost(post); })
+      .catch(error => console.error('No se pudo cargar el articulo:', error))
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [slug, staticPost]);
+
+  const post = dynamicPost || staticPost;
+
+  if (loading) {
+    return <div className="min-h-screen bg-background grid place-items-center"><div className="h-12 w-12 animate-spin rounded-full border-4 border-primary/20 border-t-primary" /></div>;
+  }
 
   if (!post) {
     return <Navigate to="/blog" />;
@@ -130,7 +151,7 @@ const BlogPostSEOPage: React.FC = () => {
     "@type": "BlogPosting",
     "headline": post.title,
     "image": post.imageUrl,
-    "datePublished": "2026-05-15T08:00:00+08:00",
+    "datePublished": 'publishedAt' in post ? post.publishedAt : "2026-05-15T08:00:00+08:00",
     "author": {
       "@type": "Person",
       "name": post.author
@@ -143,7 +164,7 @@ const BlogPostSEOPage: React.FC = () => {
       <SEOHelmet 
         title={`${post.title} | Blog EsMiOficio`} 
         description={post.excerpt}
-        canonicalUrl={`https://esmioficio.mx/blog/${slug}`}
+        canonicalUrl={getAbsoluteUrl(`/blog/${slug}`)}
         type="article"
         imageUrl={post.imageUrl}
         jsonLd={jsonLd}

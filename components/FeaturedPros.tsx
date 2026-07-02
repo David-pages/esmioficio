@@ -2,6 +2,7 @@
 import React from 'react';
 import { Professional } from '../types';
 import StarRating from './StarRating';
+import Reveal from './Reveal';
 
 interface FeaturedProsProps {
   onViewProfile: (proId: string) => void;
@@ -20,21 +21,24 @@ const FeaturedPros: React.FC<FeaturedProsProps> = ({ onViewProfile, onContact, p
   return (
     <section className="py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h3 className="text-3xl font-bold text-white mb-4">Profesionales destacados en Morelia</h3>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Reseñas reales de tus vecinos. Priorizamos la transparencia y las recomendaciones auténticas en tu localidad.
-          </p>
-        </div>
+        <Reveal>
+          <div className="text-center mb-16">
+            <h3 className="text-3xl font-bold text-white mb-4">Profesionales destacados en Morelia</h3>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Reseñas reales de tus vecinos. Priorizamos la transparencia y las recomendaciones auténticas en tu localidad.
+            </p>
+          </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featured.map((pro) => (
-            <div key={pro.id} className="bg-surface border border-border rounded-2xl p-6 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+          {featured.map((pro, index) => (
+            <Reveal key={pro.id} delay={index * 110} className="h-full">
+            <div className="h-full bg-surface border border-border rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/70 hover:ring-1 hover:ring-primary/35">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <img loading="lazy" 
-                    src={pro.imageUrl} 
-                    alt={pro.name} 
+                  <img loading="lazy"
+                    src={pro.imageUrl}
+                    alt={pro.name}
                     className="h-12 w-12 rounded-full object-cover border border-border"
                   />
                   <div>
@@ -46,7 +50,7 @@ const FeaturedPros: React.FC<FeaturedProsProps> = ({ onViewProfile, onContact, p
                    <span className="material-symbols-outlined text-blue-400 text-[20px]" title="Verificado">verified</span>
                 )}
               </div>
-              
+
               <div className="flex items-center gap-1 mb-2">
                  <StarRating rating={pro.rating} reviews={pro.reviews} sizeClass="text-sm" />
               </div>
@@ -67,9 +71,9 @@ const FeaturedPros: React.FC<FeaturedProsProps> = ({ onViewProfile, onContact, p
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={() => onViewProfile(pro.id)}
-                className="w-full py-2 rounded-lg bg-surface-light border border-border text-sm font-medium text-white hover:bg-white/10 transition-colors"
+                className="w-full py-2 rounded-lg bg-primary text-sm font-bold text-background hover:bg-primary-hover active:scale-[0.99] transition-all shadow-lg shadow-primary/10"
               >
                 Ver Perfil
               </button>
@@ -82,6 +86,7 @@ const FeaturedPros: React.FC<FeaturedProsProps> = ({ onViewProfile, onContact, p
                 </button>
               )}
             </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -90,4 +95,3 @@ const FeaturedPros: React.FC<FeaturedProsProps> = ({ onViewProfile, onContact, p
 };
 
 export default FeaturedPros;
-

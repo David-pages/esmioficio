@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { TradeRequest, Professional, Review } from '../types';
 import SEOHelmet from './SEOHelmet';
 import StarRating from './StarRating';
+import BlogAdmin from './BlogAdmin';
 import {
   DEFAULT_ADMIN_METRICS_FILTERS,
   buildAdminMetrics,
@@ -18,7 +19,7 @@ import type {
 
 interface AdminDashboardProps {
   isAuthenticated: boolean;
-  onLogin: (password: string) => boolean;
+  onLogin: () => Promise<boolean>;
   requests: TradeRequest[];
   onApproveRequest: (request: TradeRequest) => void;
   onRejectRequest: (id: string) => void;
@@ -31,7 +32,7 @@ interface AdminDashboardProps {
   onSeedData: () => Promise<void>;
 }
 
-type AdminTab = 'OVERVIEW' | 'METRICS' | 'REQUESTS' | 'PROS' | 'REVIEWS' | 'VERIFY' | 'AUDIT' | 'TOOLS';
+type AdminTab = 'OVERVIEW' | 'METRICS' | 'BLOG' | 'REQUESTS' | 'PROS' | 'REVIEWS' | 'VERIFY' | 'AUDIT' | 'TOOLS';
 type AuditLevel = 'HIGH' | 'MEDIUM' | 'LOW';
 
 type ReviewRecord = Review & {
@@ -54,8 +55,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onDeleteReview,
   onSeedData
 }) => {
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState(0);
+  const [isCheckingLogin, setIsCheckingLogin] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminTab>('OVERVIEW');
   const [messagingPro, setMessagingPro] = useState<Professional | null>(null);
   const [messageText, setMessageText] = useState('');
@@ -248,6 +251,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const tabs: { id: AdminTab; label: string; icon: string; count?: number }[] = [
     { id: 'OVERVIEW', label: 'Resumen', icon: 'space_dashboard' },
     { id: 'METRICS', label: 'Metricas', icon: 'analytics' },
+    { id: 'BLOG', label: 'Blog', icon: 'newsmode' },
     { id: 'REQUESTS', label: 'Oficios', icon: 'playlist_add_check', count: pendingRequests.length },
     { id: 'PROS', label: 'Profesionales', icon: 'engineering', count: professionals.length },
     { id: 'REVIEWS', label: 'Resenas', icon: 'rate_review', count: allReviews.length },
@@ -256,13 +260,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     { id: 'TOOLS', label: 'Herramientas', icon: 'tune' }
   ];
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (onLogin(password)) {
+    if (Date.now() < lockedUntil) {
+      const secsLeft = Math.ceil((lockedUntil - Date.now()) / 1000);
+      setError(`Demasiados intentos. Espera ${secsLeft} segundos.`);
+      return;
+    }
+
+    setIsCheckingLogin(true);
+    const loggedIn = await onLogin();
+    setIsCheckingLogin(false);
+
+    if (loggedIn) {
       setError('');
-      setPassword('');
+      setLoginAttempts(0);
     } else {
-      setError('Contrasena incorrecta');
+      const newAttempts = loginAttempts + 1;
+      setLoginAttempts(newAttempts);
+      if (newAttempts >= 5) {
+        setLockedUntil(Date.now() + 30_000);
+        setLoginAttempts(0);
+        setError('Demasiados intentos. Espera 30 segundos.');
+        return;
+      }
+      setError(`Tu sesion no tiene rol administrador (intento ${newAttempts}/5).`);
     }
   };
 
@@ -429,19 +451,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <p className="text-gray-400 text-sm">Panel independiente de EsMiOficio</p>
             </div>
             <form onSubmit={handleLoginSubmit} className="space-y-4">
-              <input
-                type="password"
-                placeholder="Contrasena de administrador"
-                className="w-full rounded-lg bg-surface-light border border-border px-4 py-3 text-white focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
+              <p className="rounded-lg border border-border bg-surface-light px-4 py-3 text-sm text-gray-300">
+                Inicia sesion en el sitio con una cuenta que tenga rol administrador en Supabase.
+              </p>
               {error && <p className="text-red-500 text-xs text-center">{error}</p>}
               <button
                 type="submit"
+                disabled={isCheckingLogin || Date.now() < lockedUntil}
                 className="w-full rounded-lg bg-red-600 py-3 font-bold text-white hover:bg-red-700 transition-colors"
               >
-                Entrar al panel
+                {isCheckingLogin ? 'Verificando...' : 'Validar acceso admin'}
               </button>
             </form>
             <button onClick={onExit} className="w-full text-center text-gray-500 text-sm mt-4 hover:text-white">
@@ -478,7 +497,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </header>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-9 gap-3 mb-8">
             {tabs.map(tab => (
               <button
                 key={tab.id}
@@ -532,6 +551,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               onRefresh={refreshAdminMetrics}
             />
           )}
+
+          {activeTab === 'BLOG' && <BlogAdmin />}
 
           {activeTab === 'REQUESTS' && (
             <AdminPanel title="Solicitudes de nuevos oficios" icon="playlist_add_check">

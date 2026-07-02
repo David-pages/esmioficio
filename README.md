@@ -36,7 +36,7 @@ Plataforma web para encontrar profesionales de oficios confiables en México (al
    ```
    VITE_SUPABASE_URL=...
    VITE_SUPABASE_ANON_KEY=...
-   VITE_ADMIN_PASSWORD=...
+   VITE_ADMIN_WHATSAPP_NUMBER=521234567890
    ```
 
 3. Arranca el servidor de desarrollo:
@@ -66,10 +66,24 @@ Los esquemas y políticas RLS de Supabase están en los archivos `supabase-*.sql
 - `supabase-client-dashboard.sql` — panel del cliente
 - `supabase-admin-analytics.sql` — métricas del admin
 - `supabase-production-fixes.sql` — correcciones de producción
+- `supabase-security-hardening.sql` - RLS, rol admin y limites de acciones sensibles
+
+### Error al cargar profesionales
+
+Si la aplicacion indica que no puede cargar `professionals_public`:
+
+1. Sustituye los valores de ejemplo de `.env.local` por la URL y la clave anonima reales de **Project Settings > API** en Supabase.
+2. Ejecuta `supabase-production-fixes.sql` en el SQL Editor. Este script crea o actualiza `professionals_public` y concede lectura a `anon` y `authenticated`.
+3. Ejecuta `supabase-security-hardening.sql` para habilitar las politicas RLS de las tablas sensibles.
+4. Reinicia `npm run dev`, porque Vite solo carga las variables de entorno al iniciar.
+
+Cuando Supabase no esta configurado, el entorno local usa los profesionales de ejemplo y no muestra una alerta de RLS.
 
 ## Notas de seguridad
 
-- `VITE_ADMIN_PASSWORD` solo oculta la interfaz del panel `/admin`. La protección real de los datos depende de las políticas RLS en Supabase: todo el código del navegador es público.
+- El panel `/admin` valida la sesion actual de Supabase y requiere `app_metadata.role = 'admin'`.
+- Las acciones sensibles dependen de politicas RLS en Supabase; ejecuta `supabase-security-hardening.sql` antes de publicar.
+
 - Nunca subas `.env.local` al repositorio (ya está en `.gitignore`).
 
 ## Estructura

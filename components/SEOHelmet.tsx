@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { getAbsoluteUrl } from '../lib/siteUrl';
 
 interface SEOHelmetProps {
   title: string;
@@ -16,7 +17,7 @@ const SEOHelmet: React.FC<SEOHelmetProps> = ({
   description = 'Encuentra y compara profesionales de oficio en Mexico por estado, municipio, resenas, experiencia y verificacion.',
   canonicalUrl,
   type = 'website',
-  imageUrl = 'https://esmioficio.mx/og-image.svg',
+  imageUrl = getAbsoluteUrl('/og-image.svg'),
   jsonLd,
   noindex = false
 }) => {
@@ -35,6 +36,7 @@ const SEOHelmet: React.FC<SEOHelmetProps> = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={imageUrl} />
+      <meta property="og:image:alt" content={`${title} - EsMiOficio`} />
 
       {/* Twitter */}
       <meta property="twitter:card" content="summary_large_image" />

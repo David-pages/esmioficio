@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { MEXICO_LOCATIONS } from '../constants';
+import { MEXICO_LOCATIONS, TRADES } from '../constants';
 import { SearchFilters, Professional } from '../types';
 import SEOHelmet from './SEOHelmet';
 import StarRating from './StarRating';
 import TrustSignal from './TrustSignal';
 import LocalActivitySummary from './LocalActivitySummary';
 import { getLastActiveText } from '../lib/trust';
+import { getAbsoluteUrl } from '../lib/siteUrl';
+import { getSearchIntentTrades, matchesSearchIntent, normalizeSearchText } from '../lib/searchIntents';
 
 interface SearchResultsProps {
   filters: SearchFilters;
@@ -51,11 +53,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     return () => clearTimeout(timer);
   }, [localFilters, experienceFilter, sortMode]);
 
-  const normalizeText = (value: string) => value
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-
   const renderBadge = (years: number, verified: boolean) => {
     const level = years >= 10 ? 'Maestro' : years >= 6 ? 'Experto' : years >= 3 ? 'Experimentado' : 'Nuevo pero prometedor';
 
@@ -84,9 +81,20 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     setSortMode('recommended');
   };
 
-  const filteredPros = professionals.filter(pro => {
-    const query = normalizeText(localFilters.query || '').trim();
-    const searchableText = normalizeText([
+  const locationMatches = (actualValue: string, expectedName?: string, expectedId?: string) => {
+    const actual = normalizeSearchText(actualValue || '');
+    const expectedValues = [expectedName, expectedId].map(value => normalizeSearchText(value || '')).filter(Boolean);
+
+    return expectedValues.some(expected => (
+      actual === expected ||
+      actual.includes(expected) ||
+      expected.includes(actual)
+    ));
+  };
+
+  const strictFilteredPros = professionals.filter(pro => {
+    const query = normalizeSearchText(localFilters.query || '');
+    const searchableText = [
       pro.name,
       pro.trade,
       pro.description,
@@ -94,18 +102,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       pro.state,
       ...(pro.services || []),
       ...(pro.coverageZones || [])
-    ].join(' '));
-    const matchesQuery = !query || searchableText.includes(query);
+    ].join(' ');
+    const matchesQuery = !query || matchesSearchIntent(query, searchableText);
     
     const stateData = MEXICO_LOCATIONS.find(s => s.id === localFilters.state);
     const matchesState = localFilters.state === 'all' || 
-      (stateData && stateData.name === pro.state);
+      (stateData && locationMatches(pro.state, stateData.name, stateData.id));
 
     let matchesMuni = true;
     if (localFilters.municipality !== 'all') {
        if (stateData) {
          const muniData = stateData.municipalities.find(m => m.id === localFilters.municipality);
-         matchesMuni = muniData ? muniData.name === pro.municipality : false;
+         matchesMuni = muniData ? locationMatches(pro.municipality, muniData.name, muniData.id) : false;
        }
     }
 
@@ -128,6 +136,53 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     if (b.rating !== a.rating) return b.rating - a.rating;
     return b.reviews - a.reviews;
   });
+
+  const queryIntentTrades = getSearchIntentTrades(localFilters.query || '');
+  const shouldRelaxLocation = queryIntentTrades.length > 0 && strictFilteredPros.length === 0 && (localFilters.state !== 'all' || localFilters.municipality !== 'all');
+
+  const getFallbackPros = (locationScope: 'state' | 'all') => professionals.filter(pro => {
+    const query = normalizeSearchText(localFilters.query || '');
+    const searchableText = [
+      pro.name,
+      pro.trade,
+      pro.description,
+      pro.municipality,
+      pro.state,
+      ...(pro.services || []),
+      ...(pro.coverageZones || [])
+    ].join(' ');
+    const matchesQuery = !query || matchesSearchIntent(query, searchableText);
+
+    const stateData = MEXICO_LOCATIONS.find(s => s.id === localFilters.state);
+    const matchesState = locationScope === 'all' || localFilters.state === 'all' ||
+      (stateData && locationMatches(pro.state, stateData.name, stateData.id));
+
+    const matchesCategory = !localFilters.category || pro.trade.toLowerCase().includes(localFilters.category.toLowerCase());
+    const expMin = { 'Todos': 0, '2+ aÃ±os': 2, '5+ aÃ±os': 5, '10+ aÃ±os': 10 }[experienceFilter];
+    const ratingMin = localFilters.minRating || 0;
+
+    if (pro.yearsExperience < expMin) return false;
+    if (pro.rating < ratingMin) return false;
+
+    const matchesVerified = localFilters.verifiedOnly ? pro.verified : true;
+    return matchesQuery && matchesState && matchesCategory && matchesVerified;
+  }).sort((a, b) => {
+    if (sortMode === 'rating') return b.rating - a.rating || b.reviews - a.reviews;
+    if (sortMode === 'experience') return b.yearsExperience - a.yearsExperience || b.rating - a.rating;
+    if (sortMode === 'reviews') return b.reviews - a.reviews || b.rating - a.rating;
+    if (Number(b.verified) !== Number(a.verified)) return Number(b.verified) - Number(a.verified);
+    if (b.rating !== a.rating) return b.rating - a.rating;
+    return b.reviews - a.reviews;
+  });
+
+  const stateFallbackPros = shouldRelaxLocation && localFilters.municipality !== 'all' ? getFallbackPros('state') : [];
+  const allFallbackPros = shouldRelaxLocation && stateFallbackPros.length === 0 && localFilters.state !== 'all' ? getFallbackPros('all') : [];
+  const fallbackScope = stateFallbackPros.length > 0 ? 'state' : allFallbackPros.length > 0 ? 'all' : null;
+  const filteredPros = fallbackScope === 'state'
+    ? stateFallbackPros
+    : fallbackScope === 'all'
+      ? allFallbackPros
+      : strictFilteredPros;
 
   const topStates = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -180,6 +235,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   const locationText = getLocationText();
   const resultsTitle = `Encuentra profesionales en ${locationText}`;
   const serviceLabel = localFilters.category || localFilters.query || 'oficios';
+  const fallbackLocationText = fallbackScope === 'state'
+    ? MEXICO_LOCATIONS.find(s => s.id === localFilters.state)?.name || 'tu estado'
+    : fallbackScope === 'all'
+      ? 'todo Mexico'
+      : null;
+  const fallbackNotice = fallbackLocationText
+    ? `No encontramos coincidencias exactas en ${locationText}. Te mostramos profesionales relacionados con "${localFilters.query}" en ${fallbackLocationText}.`
+    : null;
+  const matchedTradeLabels = queryIntentTrades
+    .map(trade => TRADES.find(item => item.id === trade)?.name || trade)
+    .filter(Boolean);
 
   // Skeleton Loader Component
   const SkeletonCard = () => (
@@ -206,7 +272,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       description={isFavoritesView
         ? 'Consulta tus profesionales guardados en EsMiOficio.'
         : `Busca y compara profesionales de ${serviceLabel} en ${locationText} por trabajos recientes, confianza, experiencia y verificacion.`}
-      canonicalUrl="https://esmioficio.mx/buscar"
+      canonicalUrl={getAbsoluteUrl('/buscar')}
       noindex={isFavoritesView || !!localFilters.query || localFilters.state !== 'all' || localFilters.municipality !== 'all' || !!localFilters.category}
     />
     <div className="min-h-[60vh] py-12">
@@ -230,6 +296,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               )}
             </div>
           </div>
+
+          {fallbackNotice && (
+            <div className="rounded-2xl border border-primary/25 bg-primary/10 px-4 py-3 text-sm font-semibold text-primary">
+              {fallbackNotice}
+            </div>
+          )}
 
           {!isFavoritesView && (
             <LocalActivitySummary trade={activityTrade} city={getActivityCity()} />
@@ -437,7 +509,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             {filteredPros.map((pro) => (
               <div key={pro.id} className="group relative bg-surface border border-border rounded-2xl p-6 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 flex flex-col">
                 {/* Favorite Button */}
-                <button 
+                <button
                   onClick={(e) => { e.stopPropagation(); onToggleFavorite(pro.id); }}
                   className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-white/10 transition-colors"
                 >
@@ -564,7 +636,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                       Contactar por WhatsApp
                     </button>
                   )}
-                  <button 
+                  <button
                     onClick={() => onViewProfile(pro.id)}
                     className="w-full py-3 rounded-lg bg-primary text-background font-bold hover:bg-primary-hover hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/10"
                   >
@@ -580,22 +652,39 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                {isFavoritesView ? 'heart_broken' : 'search_off'}
             </span>
             <h3 className="text-xl font-bold text-white mb-2">
-               {isFavoritesView ? 'Aún no tienes favoritos' : 'No encontramos resultados'}
+               {isFavoritesView
+                 ? 'Aún no tienes favoritos'
+                 : matchedTradeLabels.length > 0
+                   ? `Esta busqueda corresponde a: ${matchedTradeLabels.join(', ')}`
+                   : 'No encontramos resultados'}
             </h3>
             <p className="text-gray-400 mb-8 max-w-md">
                {isFavoritesView 
                  ? 'Explora profesionales en la búsqueda y guárdalos aquí para tenerlos siempre a la mano.' 
-                 : 'Intenta ajustar los filtros (como "Solo Verificados" o Calificación) o amplía tu búsqueda a "Todo México".'}
+                 : matchedTradeLabels.length > 0
+                   ? `La necesidad si tiene oficio asignado, pero no hay profesionales disponibles con los filtros actuales en ${locationText}. Amplia la zona o sugiere que se registre alguien de este oficio.`
+                   : 'Intenta ajustar los filtros (como "Solo Verificados" o Calificación) o amplía tu búsqueda a "Todo México".'}
             </p>
             
             {!isFavoritesView && (
-              <button 
-                onClick={onSuggestTrade}
-                className="px-8 py-3 bg-surface border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-background transition-all flex items-center gap-2 shadow-lg shadow-primary/5"
-              >
-                <span className="material-symbols-outlined">add_circle</span>
-                Deseas agregar un nuevo oficio
-              </button>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                {matchedTradeLabels.length > 0 && localFilters.state !== 'all' && (
+                  <button
+                    onClick={() => setLocalFilters(prev => ({ ...prev, state: 'all', municipality: 'all' }))}
+                    className="px-8 py-3 bg-primary text-background font-bold rounded-lg hover:bg-primary-hover transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/10"
+                  >
+                    <span className="material-symbols-outlined">travel_explore</span>
+                    Buscar en todo Mexico
+                  </button>
+                )}
+                <button 
+                  onClick={onSuggestTrade}
+                  className="px-8 py-3 bg-surface border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-background transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/5"
+                >
+                  <span className="material-symbols-outlined">add_circle</span>
+                  Deseas agregar un nuevo oficio
+                </button>
+              </div>
             )}
           </div>
         )}

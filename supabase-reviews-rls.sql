@@ -62,3 +62,13 @@ for update
 to authenticated
 using (author_id = auth.uid())
 with check (author_id = auth.uid());
+
+drop policy if exists "Authors or admins can delete reviews" on public.reviews;
+create policy "Authors or admins can delete reviews"
+on public.reviews
+for delete
+to authenticated
+using (
+  author_id = auth.uid()
+  or coalesce(auth.jwt()->'app_metadata'->>'role', '') = 'admin'
+);

@@ -7,9 +7,10 @@ interface FooterProps {
   onTermsClick: () => void;
   onAboutClick: () => void;
   onBlogClick: () => void;
+  onContactClick: () => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ onSuggestClick, onPrivacyClick, onTermsClick, onAboutClick, onBlogClick }) => {
+const Footer: React.FC<FooterProps> = ({ onSuggestClick, onPrivacyClick, onTermsClick, onAboutClick, onBlogClick, onContactClick }) => {
   // Show only a few key states in the footer to keep it clean, or randomize/feature specific ones.
   // For now, let's show Michoacan + top 5 others
   const featuredStates = MEXICO_LOCATIONS.filter(s => 
@@ -48,7 +49,7 @@ const Footer: React.FC<FooterProps> = ({ onSuggestClick, onPrivacyClick, onTerms
               <li><button onClick={onAboutClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Sobre Nosotros</button></li>
               <li><button onClick={onBlogClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Blog</button></li>
               <li><button onClick={onSuggestClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Sugerir nuevo oficio</button></li>
-              <li><a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">Contacto</a></li>
+              <li><button onClick={onContactClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Contacto</button></li>
             </ul>
           </div>
 

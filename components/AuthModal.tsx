@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { MEXICO_LOCATIONS } from '../constants';
 import { TradeCategory } from '../types';
 import { supabase } from '../lib/supabaseClient';
-import { getPasswordRecoveryRedirectUrl } from '../lib/siteUrl';
+import { getAbsoluteUrl, getPasswordRecoveryRedirectUrl } from '../lib/siteUrl';
+import { ProfessionalDraft, saveOAuthIntent } from '../lib/authIntent';
 
 interface AuthModalProps {
   type: 'LOGIN' | 'REGISTER' | 'PRO_REGISTER';
@@ -42,11 +43,51 @@ const AuthModal: React.FC<AuthModalProps> = ({ type, setType, onClose, onLogin, 
 
   const handleGoogleSignIn = async () => {
     setError(null);
+    let professionalDraft: ProfessionalDraft | null = null;
+
+    if (type === 'PRO_REGISTER') {
+      const selectedState = MEXICO_LOCATIONS.find(s => s.id === formData.stateId);
+      const municipalityName = formData.municipality === 'other'
+        ? formData.customMunicipality
+        : availableMunicipalities.find(m => m.id === formData.municipality)?.name || '';
+
+      const missingFieldError =
+        !formData.name.trim() ? 'Escribe tu nombre completo antes de continuar con Google.' :
+        !formData.trade ? 'Selecciona tu oficio antes de continuar con Google.' :
+        !formData.yearsExperience ? 'Indica tus años de experiencia antes de continuar con Google.' :
+        !formData.stateId ? 'Selecciona tu estado antes de continuar con Google.' :
+        !formData.municipality ? 'Selecciona tu municipio antes de continuar con Google.' :
+        (formData.municipality === 'other' && !formData.customMunicipality.trim()) ? 'Escribe el nombre de tu municipio antes de continuar con Google.' :
+        !formData.description.trim() ? 'Agrega una descripción corta de tus servicios antes de continuar con Google.' :
+        null;
+
+      if (missingFieldError) {
+        setError(missingFieldError);
+        return;
+      }
+
+      professionalDraft = {
+        name: formData.name.trim(),
+        trade: formData.trade,
+        yearsExperience: formData.yearsExperience,
+        description: formData.description.trim(),
+        state: selectedState?.name || '',
+        municipality: municipalityName
+      };
+    }
+
     setIsVerifying(true);
+    const isRegistration = type !== 'LOGIN';
+    saveOAuthIntent({
+      mode: isRegistration ? 'register' : 'login',
+      requestedRole: isRegistration ? (type === 'PRO_REGISTER' ? 'PRO' : 'USER') : null,
+      returnTo: contactIntent ? `${window.location.pathname}${window.location.search}` : null,
+      professionalDraft
+    });
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.href
+        redirectTo: getAbsoluteUrl('/auth/callback')
       }
     });
     if (error) {
@@ -81,6 +122,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ type, setType, onClose, onLogin, 
           email: formData.email,
           password: formData.password,
           options: {
+            emailRedirectTo: getAbsoluteUrl('/auth/callback'),
             data: {
               name: formData.name,
               role: type === 'PRO_REGISTER' ? 'PRO' : 'USER',
@@ -225,7 +267,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ type, setType, onClose, onLogin, 
               </div>
             )}
 
-            {type === 'LOGIN' && (
+            {(type === 'LOGIN' || type === 'REGISTER') && (
               <>
                 <button
                   type="button"
@@ -234,7 +276,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ type, setType, onClose, onLogin, 
                   className="w-full bg-white text-background font-black py-3.5 rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   <span className="material-symbols-outlined text-[20px]">account_circle</span>
-                  Continuar con Google
+                  {type === 'REGISTER' ? 'Crear cuenta con Google' : 'Continuar con Google'}
                 </button>
                 <div className="flex items-center gap-3 py-1">
                   <div className="h-px flex-1 bg-border"></div>
@@ -321,6 +363,25 @@ const AuthModal: React.FC<AuthModalProps> = ({ type, setType, onClose, onLogin, 
                 </>
               )}
             </div>
+
+            {type === 'PRO_REGISTER' && (
+              <>
+                <div className="flex items-center gap-3 py-1">
+                  <div className="h-px flex-1 bg-border"></div>
+                  <span className="text-[10px] uppercase font-bold text-gray-600">o continua con</span>
+                  <div className="h-px flex-1 bg-border"></div>
+                </div>
+                <button
+                  type="button"
+                  disabled={isVerifying}
+                  onClick={handleGoogleSignIn}
+                  className="w-full bg-white text-background font-black py-3.5 rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-[20px]">account_circle</span>
+                  Registrarme con Google
+                </button>
+              </>
+            )}
 
             {type === 'LOGIN' && (
               <div className="flex justify-end">

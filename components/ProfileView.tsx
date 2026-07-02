@@ -4,11 +4,13 @@ import { Link } from 'react-router-dom';
 import { Professional, Review, User } from '../types';
 import { MEXICO_LOCATIONS, TRADES } from '../constants';
 import { supabase } from '../lib/supabaseClient';
+import { adminWhatsAppNumber, hasAdminWhatsAppNumber } from '../lib/adminContact';
 import ImageLightbox from './ImageLightbox'; // Importar Lightbox
 import StarRating from './StarRating';
 import TrustSignal from './TrustSignal';
 import RecentWorks from './RecentWorks';
 import { compressImageToWebP, getLastActiveText, getVerificationCopy } from '../lib/trust';
+import { getProfileUrl } from '../lib/profileUrl';
 
 interface ProfileViewProps {
   professional: Professional;
@@ -353,17 +355,19 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
   // Logic for Native Share
   const handleShareClick = async () => {
+    const profileUrl = getProfileUrl(professional);
+    const shareText = `Hola, soy ${professional.name}, ${professional.trade} en ${professional.municipality}. Puedes revisar mi perfil, reseñas y trabajos en EsMiOficio: ${profileUrl}`;
     const shareData = {
-      title: `Contrata a ${professional.name} en EsMiOficio`,
-      text: `Mira el perfil de ${professional.name}, ${professional.trade} en ${professional.municipality}.`,
-      url: window.location.href
+      title: `${professional.name}, ${professional.trade} | EsMiOficio`,
+      text: shareText,
+      url: profileUrl
     };
 
     try {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(`${shareData.title} - ${shareData.url}`);
+        await navigator.clipboard.writeText(shareText);
         onShare('Enlace copiado al portapapeles');
       }
     } catch (err) {
@@ -372,15 +376,17 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   };
 
   const handleRequestVerification = () => {
-    // Número de soporte proporcionado por el usuario
-    const adminPhone = "524436214278"; 
+    if (!hasAdminWhatsAppNumber) {
+      onShare('El WhatsApp administrativo no esta configurado');
+      return;
+    }
     const message = `Hola administración de EsMiOficio, soy ${professional.name} (ID: ${professional.id}). Me gustaría solicitar la verificación de mi perfil de ${professional.trade}. Adjunto mis documentos de identidad para validación.`;
-    const url = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${adminWhatsAppNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
 
   const copyProfessionalPromo = async () => {
-    const text = `Hola, soy ${professional.name}, ${professional.trade} en ${professional.municipality}. Puedes revisar mi perfil, resenas y trabajos en EsMiOficio: ${window.location.href}`;
+    const text = `Hola, soy ${professional.name}, ${professional.trade} en ${professional.municipality}. Puedes revisar mi perfil, reseñas y trabajos en EsMiOficio: ${getProfileUrl(professional)}`;
     await navigator.clipboard.writeText(text);
     onShare('Texto de promocion copiado');
   };
@@ -773,14 +779,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                   )}
                   {!isEditing && (
                     <>
-                      <button 
+                      <button
                         onClick={onToggleFavorite}
                         className="bg-black/40 backdrop-blur-md p-3 rounded-full text-white hover:bg-black/60 transition-all active:scale-95"
                         title={isFavorite ? "Quitar de favoritos" : "Guardar en favoritos"}
                       >
                         <span className={`material-symbols-outlined ${isFavorite ? 'text-red-500 fill-1' : ''}`}>favorite</span>
                       </button>
-                      <button 
+                      <button
                         onClick={handleShareClick}
                         className="bg-black/40 backdrop-blur-md p-3 rounded-full text-white hover:bg-black/60 transition-all active:scale-95"
                         title="Compartir Perfil"
@@ -1012,7 +1018,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                         <span className="material-symbols-outlined text-primary mb-2 text-3xl">lock_person</span>
                         <p className="text-xs text-gray-300 mb-4 font-medium px-2 leading-relaxed">Los datos de contacto son exclusivos para nuestra comunidad.</p>
                         <button 
-                          onClick={() => onContact(professional)} 
+                          onClick={() => onContact(professional)}
                           className="w-full bg-primary hover:bg-primary-hover text-background px-4 py-3 rounded-xl font-black text-sm transition-all active:scale-95"
                         >
                           Contactar por WhatsApp
@@ -1810,5 +1816,3 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 };
 
 export default ProfileView;
-
-

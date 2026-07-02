@@ -8,7 +8,12 @@ export const getSiteUrl = () => {
     return trimTrailingSlash(window.location.origin);
   }
 
-  return 'https://esmioficio.mx';
+  return 'https://esmioficio.com';
+};
+
+export const getAbsoluteUrl = (path = '/') => {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${getSiteUrl()}${normalizedPath}`;
 };
 
 export const getPasswordRecoveryRedirectUrl = () => `${getSiteUrl()}/update-password`;

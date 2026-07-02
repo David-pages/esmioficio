@@ -17,10 +17,10 @@ const Hero: React.FC<HeroProps> = ({ onSearch, onPublishClick }) => {
   const [isLocating, setIsLocating] = useState(false);
   const [detectedCity, setDetectedCity] = useState<string | null>(null);
   const popularNeeds = [
-    { icon: 'water_drop', label: 'Fuga de agua', query: 'plomero fuga de agua' },
-    { icon: 'electrical_services', label: 'Falla electrica', query: 'electricista falla electrica' },
-    { icon: 'format_paint', label: 'Pintar casa', query: 'pintor casa' },
-    { icon: 'roofing', label: 'Impermeabilizar', query: 'impermeabilizacion' }
+    { icon: 'water_drop', label: 'Fuga de agua', query: 'fuga de agua' },
+    { icon: 'electrical_services', label: 'Falla electrica', query: 'falla electrica' },
+    { icon: 'format_paint', label: 'Pintar casa', query: 'pintar casa' },
+    { icon: 'roofing', label: 'Impermeabilizar', query: 'impermeabilizar' }
   ];
 
   // Cargar búsquedas recientes al iniciar
@@ -122,7 +122,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch, onPublishClick }) => {
       </div>
 
       <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
-        <h1 className="mx-auto max-w-4xl text-4xl font-black tracking-tight text-white sm:text-6xl mb-6" aria-live="polite">
+        <h1 className="mx-auto max-w-4xl text-4xl font-black tracking-tight text-white sm:text-6xl mb-6 animate-fade-in-up" aria-live="polite">
           {detectedCity ? (
             <>
               Encuentra profesionales confiables en <br/><span className="text-primary">{detectedCity}</span>
@@ -131,11 +131,11 @@ const Hero: React.FC<HeroProps> = ({ onSearch, onPublishClick }) => {
             'Encuentra profesionales confiables cerca de ti'
           )}
         </h1>
-        <p className="mx-auto max-w-2xl text-lg text-gray-400 mb-12">
+        <p className="mx-auto max-w-2xl text-lg text-gray-400 mb-12 animate-fade-in-up [animation-delay:120ms]">
           Busca, revisa trabajos reales y contacta por WhatsApp con mas seguridad.
         </p>
 
-        <div className="mx-auto max-w-4xl rounded-2xl bg-surface border border-border shadow-2xl shadow-black/50 overflow-hidden">
+        <div className="mx-auto max-w-4xl rounded-2xl bg-surface border border-border shadow-2xl shadow-black/50 overflow-hidden animate-fade-in-up [animation-delay:220ms]">
           <div className="p-6">
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="relative flex-grow group text-left lg:w-2/5">
@@ -255,14 +255,15 @@ const Hero: React.FC<HeroProps> = ({ onSearch, onPublishClick }) => {
         </div>
 
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
-          {popularNeeds.map((need) => (
+          {popularNeeds.map((need, idx) => (
             <button
               key={need.label}
               onClick={() => {
                 setQuery(need.query);
                 handleSubmit(need.query);
               }}
-              className="group rounded-2xl bg-surface/80 border border-border px-4 py-4 hover:border-primary/50 hover:bg-surface-light transition-all"
+              style={{ animationDelay: `${320 + idx * 80}ms` }}
+              className="group rounded-2xl bg-surface/80 border border-border px-4 py-4 hover:border-primary/50 hover:bg-surface-light hover:-translate-y-0.5 transition-all duration-300 animate-fade-in-up"
             >
               <span className="material-symbols-outlined text-primary text-[24px] mb-2 block group-hover:scale-110 transition-transform">{need.icon}</span>
               <span className="block text-sm font-bold text-white">{need.label}</span>

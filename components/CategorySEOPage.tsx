@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import SEOHelmet from './SEOHelmet';
+import { getAbsoluteUrl } from '../lib/siteUrl';
 import { Professional, TradeCategory } from '../types';
 import { MapPin, CheckCircle, Shield } from 'lucide-react';
 import StarRating from './StarRating';
@@ -88,7 +89,7 @@ const CategorySEOPage: React.FC<CategorySEOPageProps> = ({ professionals, trades
     "@type": "CollectionPage",
     "name": title,
     "description": description,
-    "url": `https://esmioficio.mx/oficios/${categorySlug}`,
+    "url": getAbsoluteUrl(`/oficios/${categorySlug}`),
     "mainEntity": {
       "@type": "ItemList",
       "itemListElement": pros.slice(0, 10).map((pro, index) => ({
@@ -134,7 +135,7 @@ const CategorySEOPage: React.FC<CategorySEOPageProps> = ({ professionals, trades
       <SEOHelmet 
         title={title} 
         description={description} 
-        canonicalUrl={`https://esmioficio.mx/oficios/${categorySlug}`}
+        canonicalUrl={getAbsoluteUrl(`/oficios/${categorySlug}`)}
         jsonLd={combinedJsonLd as any}
       />
       

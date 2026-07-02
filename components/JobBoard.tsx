@@ -35,7 +35,7 @@ const JobBoard: React.FC<JobBoardProps> = ({ user, onLoginRequest, showToast }) 
   const fetchPosts = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from('job_posts')
+      .from('job_posts_public')
       .select('*')
       .eq('status', 'OPEN')
       .order('created_at', { ascending: false });
@@ -103,14 +103,19 @@ const JobBoard: React.FC<JobBoardProps> = ({ user, onLoginRequest, showToast }) 
     }
   };
 
-  const handleContactClient = (post: JobPost) => {
+  const handleContactClient = async (post: JobPost) => {
     if (!user) {
       onLoginRequest();
       return;
     }
     
     const message = `Hola ${post.client_name}, vi tu publicación en EsMiOficio ("${post.title}") y me gustaría ofrecer mis servicios como profesional.`;
-    const cleanPhone = post.phone_number.replace(/\D/g, '');
+    const { data, error } = await supabase.rpc('get_job_post_contact', { p_job_post_id: post.id });
+    const cleanPhone = String(data?.[0]?.phone_number || '').replace(/\D/g, '');
+    if (error || !cleanPhone) {
+      showToast('No pudimos desbloquear el contacto. Verifica tu sesion.', 'error');
+      return;
+    }
     const finalPhone = cleanPhone.startsWith('52') ? cleanPhone : `52${cleanPhone}`;
     const url = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
     

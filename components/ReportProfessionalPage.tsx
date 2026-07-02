@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { Professional, User } from '../types';
 import SEOHelmet from './SEOHelmet';
+import { getAbsoluteUrl } from '../lib/siteUrl';
 import SafetyCenter from './SafetyCenter';
 
 interface ReportProfessionalPageProps {
@@ -43,7 +44,7 @@ const ReportProfessionalPage: React.FC<ReportProfessionalPageProps> = ({ profess
       <SEOHelmet
         title={`Reportar a ${professional.name} | EsMiOficio`}
         description="Reporta un problema con evidencia o solicita mediacion basica dentro de EsMiOficio."
-        canonicalUrl={`https://esmioficio.mx/reportar/${professional.id}`}
+        canonicalUrl={getAbsoluteUrl(`/reportar/${professional.id}`)}
         noindex
       />
 

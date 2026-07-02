@@ -1,4 +1,5 @@
 import React from 'react';
+import ParallaxImage from './ParallaxImage';
 
 interface AboutUsProps {
   onBack: () => void;
@@ -11,11 +12,15 @@ const AboutUs: React.FC<AboutUsProps> = ({ onBack, onRegisterClick }) => {
       <div className="mx-auto max-w-5xl bg-surface border border-border rounded-3xl overflow-hidden shadow-2xl animate-fade-in">
         
         {/* Header Image/Banner */}
-        <div className="relative h-64 md:h-80">
-          <img loading="lazy" 
+        <div className="relative h-64 overflow-hidden md:h-80">
+          <ParallaxImage
             src="https://images.unsplash.com/photo-1581578731117-104f2a41272c?q=80&w=1920&auto=format&fit=crop" 
             alt="Trabajador mexicano" 
-            className="w-full h-full object-cover"
+            loading="eager"
+            intensity="hero"
+            radius="none"
+            className="absolute inset-0 h-full w-full"
+            imageClassName="opacity-95"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent flex flex-col justify-end p-8 md:p-12">
             <button 
@@ -47,10 +52,12 @@ const AboutUs: React.FC<AboutUsProps> = ({ onBack, onRegisterClick }) => {
               </p>
             </div>
             <div className="bg-surface-light rounded-2xl p-2 border border-border rotate-2 hover:rotate-0 transition-transform duration-500">
-              <img loading="lazy" 
+              <ParallaxImage
                 src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop" 
                 alt="Comunidad trabajando" 
-                className="rounded-xl w-full object-cover h-64 md:h-full grayscale hover:grayscale-0 transition-all duration-500"
+                intensity="medium"
+                className="h-64 w-full rounded-xl md:h-full"
+                imageClassName="grayscale transition-[filter] duration-500 hover:grayscale-0"
               />
             </div>
           </section>
