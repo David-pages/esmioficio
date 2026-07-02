@@ -14,7 +14,12 @@ if (!isSupabaseConfigured) {
   console.info('Supabase is not configured. Local fallback data will be used.');
 }
 
-export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '', {
+// createClient lanza un error si la URL esta vacia y eso deja la pantalla en
+// negro. Con placeholders validos la app arranca y usa los datos locales.
+const FALLBACK_URL = 'https://placeholder.supabase.co';
+const FALLBACK_KEY = 'sb_publishable_placeholder';
+
+export const supabase = createClient(supabaseUrl || FALLBACK_URL, supabaseAnonKey || FALLBACK_KEY, {
   auth: {
     flowType: 'pkce',
     persistSession: true,
