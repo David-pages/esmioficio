@@ -118,7 +118,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch, onPublishClick }) => {
     <section className="relative overflow-hidden pt-16 pb-24 lg:pt-32 lg:pb-40">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none opacity-20">
         <div className="absolute top-10 right-10 w-96 h-96 bg-primary rounded-full blur-[128px]"></div>
-        <div className="absolute bottom-10 left-10 w-64 h-64 bg-pink-900 rounded-full blur-[100px]"></div>
+        <div className="absolute bottom-10 left-10 w-64 h-64 bg-blue-800 rounded-full blur-[100px]"></div>
       </div>
 
       <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
@@ -131,7 +131,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch, onPublishClick }) => {
             'Encuentra profesionales confiables cerca de ti'
           )}
         </h1>
-        <p className="mx-auto max-w-2xl text-lg text-gray-400 mb-12 animate-fade-in-up [animation-delay:120ms]">
+        <p className="mx-auto max-w-2xl text-lg text-gray-300 mb-12 animate-fade-in-up [animation-delay:120ms]">
           Busca, revisa trabajos reales y contacta por WhatsApp con mas seguridad.
         </p>
 
@@ -216,7 +216,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch, onPublishClick }) => {
             {/* Historial de búsquedas recientes */}
             {(recentSearches.length > 0 || suggestedSearches.length > 0) && (
               <div className="mt-4 flex flex-wrap items-center gap-2 justify-center lg:justify-start animate-fade-in">
-                <span className="text-xs text-gray-500 mr-1">{recentSearches.length > 0 ? 'Recientes:' : 'Sugerencias:'}</span>
+                <span className="text-xs text-gray-400 mr-1">{recentSearches.length > 0 ? 'Recientes:' : 'Sugerencias:'}</span>
                 {(recentSearches.length > 0 ? recentSearches : suggestedSearches).map((term, idx) => (
                   <button
                     key={idx}
@@ -242,10 +242,10 @@ const Hero: React.FC<HeroProps> = ({ onSearch, onPublishClick }) => {
             )}
 
             <div className="mt-8 pt-6 border-t border-border/50 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <span className="text-gray-400 font-medium">Ofreces un servicio en {selectedLocationName}?</span>
-              <button 
+              <span className="text-gray-300 font-medium">Ofreces un servicio en {selectedLocationName}?</span>
+              <button
                 onClick={onPublishClick}
-                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-6 py-2.5 rounded-full border border-white/10 transition-colors font-bold text-sm"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-6 py-2.5 rounded-full border border-white/25 transition-colors font-bold text-sm"
               >
                 <span className="material-symbols-outlined text-[18px] text-primary">add_circle</span>
                 Registrar mi oficio
@@ -267,7 +267,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch, onPublishClick }) => {
             >
               <span className="material-symbols-outlined text-primary text-[24px] mb-2 block group-hover:scale-110 transition-transform">{need.icon}</span>
               <span className="block text-sm font-bold text-white">{need.label}</span>
-              <span className="block text-xs text-gray-500 mt-1">Buscar en {selectedLocationName}</span>
+              <span className="block text-xs text-gray-400 mt-1">Buscar en {selectedLocationName}</span>
             </button>
           ))}
         </div>

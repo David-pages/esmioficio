@@ -20,7 +20,7 @@ const Categories: React.FC<CategoriesProps> = ({ onCategorySelect, onViewAll, tr
         <div className="flex items-center justify-between mb-10">
           <div>
             <h3 className="text-2xl font-bold text-white">Nuestros Oficios</h3>
-            <p className="text-sm text-gray-500 mt-1">Explora {trades.length} especialidades disponibles en México</p>
+            <p className="text-sm text-gray-400 mt-1">Explora {trades.length} especialidades disponibles en México</p>
           </div>
           <button 
             onClick={onViewAll}

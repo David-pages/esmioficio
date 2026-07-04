@@ -38,7 +38,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, onLoginClick, onRegisterCli
               {user.role === 'PRO' ? (
                 <button 
                   onClick={onProfileClick} 
-                  className="flex items-center gap-1 bg-yellow-600/20 text-yellow-500 border border-yellow-500/30 px-3 py-1.5 rounded-lg hover:bg-yellow-600/40 transition-colors text-sm font-bold shadow-sm shadow-yellow-900/20"
+                  className="flex items-center gap-1 bg-primary/15 text-primary border border-primary/30 px-3 py-1.5 rounded-lg hover:bg-primary/25 transition-colors text-sm font-bold shadow-sm shadow-blue-950/30"
                 >
                   <span className="material-symbols-outlined text-sm">dashboard</span>
                   Mi Panel
@@ -71,7 +71,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, onLoginClick, onRegisterCli
           ) : (
             <>
               <button onClick={onLoginClick} className="text-sm font-bold text-white hover:text-primary transition-colors ml-2">Ingresar</button>
-              <button onClick={onRegisterClick} className="bg-primary text-black px-4 py-2 rounded-lg font-bold text-sm shadow-lg shadow-primary/20">Registrarse</button>
+              <button onClick={onRegisterClick} className="bg-primary text-background px-4 py-2 rounded-lg font-bold text-sm shadow-lg shadow-primary/25 hover:bg-primary-hover transition-colors">Registrarse</button>
             </>
           )}
         </div>

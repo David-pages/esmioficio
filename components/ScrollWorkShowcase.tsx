@@ -44,7 +44,7 @@ const ScrollWorkShowcase: React.FC = () => {
                 Contrata con confianza
               </h2>
             </div>
-            <p className="max-w-md text-sm leading-relaxed text-gray-400 sm:text-base">
+            <p className="max-w-md text-sm leading-relaxed text-gray-300 sm:text-base">
               Antes de contratar, tómate un minuto para revisar la evidencia de cada profesional. Estos tres consejos te ayudan a elegir mejor.
             </p>
           </div>

@@ -1965,7 +1965,7 @@ const App: React.FC = () => {
             />
             <section className="relative py-16 px-4">
               <div className="absolute inset-0 bg-surface-light/30"></div>
-              <div className="relative mx-auto max-w-5xl rounded-3xl bg-gradient-to-r from-primary/90 to-yellow-600 p-8 md:p-12 overflow-hidden shadow-2xl">
+              <div className="relative mx-auto max-w-5xl rounded-3xl bg-gradient-to-r from-primary/90 to-blue-700 p-8 md:p-12 overflow-hidden shadow-2xl">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                   <div className="text-center md:text-left">

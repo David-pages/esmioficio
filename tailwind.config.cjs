@@ -14,12 +14,12 @@ module.exports = {
         sans: ['Inter', 'sans-serif'],
       },
       colors: {
-        primary: '#e6b319',
-        'primary-hover': '#d4a415',
-        background: '#121212',
-        surface: '#1E1E1E',
-        'surface-light': '#2C2C2C',
-        border: '#333333',
+        primary: '#3B82F6',
+        'primary-hover': '#60A5FA',
+        background: '#08111F',
+        surface: '#0F1B2D',
+        'surface-light': '#17263B',
+        border: '#2C4162',
       },
       keyframes: {
         'fade-in': {

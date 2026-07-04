@@ -25,7 +25,7 @@ const SEOHelmet: React.FC<SEOHelmetProps> = ({
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
-      <meta name="theme-color" content="#121212" />
+      <meta name="theme-color" content="#08111F" />
       <meta name="color-scheme" content="dark" />
       
       {/* Open Graph / Facebook */}

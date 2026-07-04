@@ -67,7 +67,7 @@ const AboutUs: React.FC<AboutUsProps> = ({ onBack, onRegisterClick }) => {
             <h2 className="text-3xl font-bold text-white mb-10 text-center">Nuestros Pilares</h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="bg-surface-light/30 p-8 rounded-2xl border border-border hover:border-primary/50 transition-colors text-center">
-                <span className="material-symbols-outlined text-4xl text-yellow-400 mb-4">handshake</span>
+                <span className="material-symbols-outlined text-4xl text-primary mb-4">handshake</span>
                 <h3 className="text-xl font-bold text-white mb-3">Confianza</h3>
                 <p className="text-gray-400">Verificamos perfiles y fomentamos reseñas reales para asegurar que cada contratación sea segura y satisfactoria.</p>
               </div>
@@ -99,7 +99,7 @@ const AboutUs: React.FC<AboutUsProps> = ({ onBack, onRegisterClick }) => {
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <button 
                 onClick={onRegisterClick}
-                className="px-8 py-4 bg-primary text-background font-bold rounded-xl text-lg hover:bg-primary-hover shadow-[0_0_20px_rgba(230,179,25,0.4)] transition-all hover:scale-105"
+                className="px-8 py-4 bg-primary text-background font-bold rounded-xl text-lg hover:bg-primary-hover shadow-[0_0_20px_rgba(59,130,246,0.35)] transition-all hover:scale-105"
               >
                 Registrar mi Oficio
               </button>

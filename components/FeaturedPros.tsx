@@ -24,7 +24,7 @@ const FeaturedPros: React.FC<FeaturedProsProps> = ({ onViewProfile, onContact, p
         <Reveal>
           <div className="text-center mb-16">
             <h3 className="text-3xl font-bold text-white mb-4">Profesionales destacados en Morelia</h3>
-            <p className="text-gray-400 max-w-2xl mx-auto">
+            <p className="text-gray-300 max-w-2xl mx-auto">
               Reseñas reales de tus vecinos. Priorizamos la transparencia y las recomendaciones auténticas en tu localidad.
             </p>
           </div>
@@ -55,7 +55,7 @@ const FeaturedPros: React.FC<FeaturedProsProps> = ({ onViewProfile, onContact, p
                  <StarRating rating={pro.rating} reviews={pro.reviews} sizeClass="text-sm" />
               </div>
 
-              <div className="flex items-center gap-1 text-gray-400 text-xs mb-4">
+              <div className="flex items-center gap-1 text-gray-300 text-xs mb-4">
                 <span className="material-symbols-outlined text-[16px]">location_on</span>
                 {pro.municipality}, {pro.state}
               </div>
@@ -63,11 +63,11 @@ const FeaturedPros: React.FC<FeaturedProsProps> = ({ onViewProfile, onContact, p
               <div className="grid grid-cols-2 gap-2 mb-4 text-center">
                 <div className="rounded-lg bg-surface-light/50 border border-border px-2 py-2">
                   <span className="block text-white font-bold text-sm">{pro.yearsExperience}+</span>
-                  <span className="text-[10px] uppercase text-gray-500">anos</span>
+                  <span className="text-[10px] uppercase text-gray-400">anos</span>
                 </div>
                 <div className="rounded-lg bg-surface-light/50 border border-border px-2 py-2">
                   <span className="block text-white font-bold text-sm">{pro.reviews}</span>
-                  <span className="text-[10px] uppercase text-gray-500">resenas</span>
+                  <span className="text-[10px] uppercase text-gray-400">resenas</span>
                 </div>
               </div>
 

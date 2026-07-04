@@ -28,7 +28,7 @@ const Footer: React.FC<FooterProps> = ({ onSuggestClick, onPrivacyClick, onTerms
               </div>
               <span className="text-base font-bold text-white">EsMiOficio</span>
             </div>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-gray-400 mb-4">
               Conectando comunidades en todo México con talento local de confianza a través de la transparencia.
             </p>
           </div>
@@ -39,7 +39,7 @@ const Footer: React.FC<FooterProps> = ({ onSuggestClick, onPrivacyClick, onTerms
               {featuredStates.map(loc => (
                  <li key={loc.id}><a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">{loc.name}</a></li>
               ))}
-              <li><span className="text-sm text-gray-600 italic">...y {MEXICO_LOCATIONS.length - featuredStates.length} estados más</span></li>
+              <li><span className="text-sm text-gray-500 italic">...y {MEXICO_LOCATIONS.length - featuredStates.length} estados más</span></li>
             </ul>
           </div>
 
@@ -63,7 +63,7 @@ const Footer: React.FC<FooterProps> = ({ onSuggestClick, onPrivacyClick, onTerms
         </div>
         
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-500">
             © 2024 EsMiOficio. Hecho con orgullo para México.
           </p>
         </div>
