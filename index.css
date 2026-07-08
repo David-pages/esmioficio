@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 body {
-  background-color: #121212;
-  color: white;
+  background-color: #070C1A;
+  color: #CDD9EE;
 }
 
 html {
@@ -13,22 +13,18 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-img,
-video {
+img, video {
   max-width: 100%;
 }
 
 @media (max-width: 640px) {
-  .blur-\[128px\],
-  .blur-\[100px\] {
+  .blur-\[128px\], .blur-\[100px\] {
     filter: blur(48px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
@@ -36,31 +32,20 @@ video {
   }
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
+/* ─── Scrollbar ─── */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #0D1830; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #1E3356; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #04D9A5; }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #1e1e1e;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #e6b319;
-}
-
-/* 🟢 INICIO MEJORA 1 */
+/* ─── Badges ─── */
 .badge-nivel {
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  background: rgba(245, 158, 11, 0.12);
-  color: #facc15;
+  border: 1px solid rgba(240, 168, 50, 0.35);
+  background: rgba(240, 168, 50, 0.10);
+  color: #F0A832;
   border-radius: 9999px;
   padding: 0.15rem 0.5rem;
   font-size: 0.68rem;
@@ -73,9 +58,9 @@ video {
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  background: rgba(59, 130, 246, 0.12);
-  color: #93c5fd;
+  border: 1px solid rgba(4, 217, 165, 0.30);
+  background: rgba(4, 217, 165, 0.08);
+  color: #04D9A5;
   border-radius: 9999px;
   padding: 0.15rem 0.5rem;
   font-size: 0.68rem;
@@ -83,17 +68,14 @@ video {
   line-height: 1;
   white-space: nowrap;
 }
-/* 🔴 FIN MEJORA 1 */
 
-/* 🟢 INICIO MEJORA 3 */
-.trend-badge,
-.activity-badge {
+.trend-badge, .activity-badge {
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.06);
-  color: #d1d5db;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.04);
+  color: #8BA0B8;
   border-radius: 9999px;
   padding: 0.2rem 0.55rem;
   font-size: 0.72rem;
@@ -102,4 +84,117 @@ video {
   white-space: nowrap;
   transition: opacity 0.3s ease;
 }
-/* 🔴 FIN MEJORA 3 */
+
+/* ═══════════════════════════════════════════
+   AURORA UI SYSTEM
+   ═══════════════════════════════════════════ */
+
+/* Glass panel — the foundational card surface */
+.aurora-glass {
+  background: rgba(13, 24, 48, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(30, 51, 86, 0.75);
+  box-shadow:
+    0 4px 32px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Hover shimmer for interactive glass cards */
+.aurora-glass-hover {
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.3s ease;
+}
+.aurora-glass-hover:hover {
+  border-color: rgba(4, 217, 165, 0.24);
+  box-shadow:
+    0 12px 56px rgba(0, 0, 0, 0.55),
+    0 0 32px rgba(4, 217, 165, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  transform: translateY(-2px);
+}
+
+/* Subtle perspective grid for hero floor */
+.aurora-grid {
+  background-image:
+    linear-gradient(rgba(30, 51, 86, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 51, 86, 0.18) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* Tri-color aurora gradient on text */
+.aurora-text-gradient {
+  background: linear-gradient(135deg, #04D9A5 0%, #7B4FD4 50%, #E04B8A 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Input focus ring */
+.aurora-input {
+  background: rgba(21, 34, 64, 0.8);
+  border: 1px solid rgba(30, 51, 86, 0.9);
+  color: #CDD9EE;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.aurora-input::placeholder { color: #4A6080; }
+.aurora-input:focus {
+  outline: none;
+  border-color: rgba(4, 217, 165, 0.45);
+  box-shadow: 0 0 0 3px rgba(4, 217, 165, 0.09);
+}
+
+/* Select aurora style */
+.aurora-select {
+  background: rgba(21, 34, 64, 0.8);
+  border: 1px solid rgba(30, 51, 86, 0.9);
+  color: #CDD9EE;
+  transition: border-color 0.2s;
+}
+.aurora-select:focus {
+  outline: none;
+  border-color: rgba(4, 217, 165, 0.45);
+  box-shadow: 0 0 0 3px rgba(4, 217, 165, 0.09);
+}
+.aurora-select option {
+  background: #0D1830;
+  color: #CDD9EE;
+}
+
+/* Primary CTA button */
+.aurora-btn-primary {
+  background: #04D9A5;
+  color: #070C1A;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 0 0 0 rgba(4, 217, 165, 0);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.aurora-btn-primary:hover {
+  background: #00C496;
+  box-shadow: 0 0 24px rgba(4, 217, 165, 0.22);
+  transform: translateY(-1px);
+}
+.aurora-btn-primary:active { transform: scale(0.97); }
+
+/* Ghost CTA button */
+.aurora-btn-ghost {
+  background: rgba(4, 217, 165, 0.06);
+  color: #04D9A5;
+  border: 1px solid rgba(4, 217, 165, 0.22);
+  font-weight: 700;
+  transition: background 0.2s, border-color 0.2s;
+}
+.aurora-btn-ghost:hover {
+  background: rgba(4, 217, 165, 0.12);
+  border-color: rgba(4, 217, 165, 0.40);
+}
+
+/* Quick-need card icon glow helper — set --glow-color per element */
+.aurora-icon-glow {
+  filter: drop-shadow(0 0 7px var(--glow-color, rgba(4, 217, 165, 0.45)));
+}
+
+/* Verified ring glow on pro images */
+.aurora-ring-verified {
+  box-shadow: 0 0 0 2px #04D9A5, 0 0 12px rgba(4, 217, 165, 0.30);
+}

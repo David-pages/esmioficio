@@ -28,66 +28,119 @@ const SOCIAL_LINKS = [
   },
 ];
 
+const NavLink: React.FC<{ onClick: () => void; children: React.ReactNode }> = ({ onClick, children }) => (
+  <li>
+    <button
+      onClick={onClick}
+      className="text-sm text-left transition-colors"
+      style={{ color: '#4A6080' }}
+      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#04D9A5'; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = '#4A6080'; }}
+    >
+      {children}
+    </button>
+  </li>
+);
+
 const Footer: React.FC<FooterProps> = ({ onSuggestClick, onPrivacyClick, onTermsClick, onAboutClick, onBlogClick, onContactClick }) => {
-  // Show only a few key states in the footer to keep it clean, or randomize/feature specific ones.
-  // For now, let's show Michoacan + top 5 others
-  const featuredStates = MEXICO_LOCATIONS.filter(s => 
+  const featuredStates = MEXICO_LOCATIONS.filter(s =>
     ['michoacan', 'cdmx', 'jalisco', 'nuevo_leon', 'mexico_edo', 'puebla'].includes(s.id)
   );
 
   return (
-    <footer className="bg-background border-t border-border pt-16 pb-8">
+    <footer
+      className="pt-16 pb-8"
+      style={{ borderTop: '1px solid rgba(30,51,86,0.55)', background: 'rgba(7,12,26,0.98)' }}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+
+          {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="flex h-6 w-6 items-center justify-center rounded bg-primary/20 text-primary">
-                <span className="material-symbols-outlined text-sm">construction</span>
+            <div className="flex items-center gap-2.5 mb-4">
+              <div
+                className="flex h-7 w-7 items-center justify-center rounded-lg"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(4,217,165,0.15) 0%, rgba(123,79,212,0.15) 100%)',
+                  border: '1px solid rgba(4,217,165,0.22)',
+                }}
+              >
+                <span className="material-symbols-outlined text-[16px] text-primary">construction</span>
               </div>
-              <span className="text-base font-bold text-white">EsMiOficio</span>
+              <span className="text-base font-black text-white">EsMiOficio</span>
             </div>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm leading-relaxed mb-4" style={{ color: '#4A6080' }}>
               Conectando comunidades en todo México con talento local de confianza a través de la transparencia.
             </p>
           </div>
-          
+
+          {/* States */}
           <div>
-            <h4 className="text-sm font-semibold text-white mb-4">Estados Destacados</h4>
-            <ul className="space-y-2">
+            <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#CDD9EE' }}>
+              Estados Destacados
+            </h4>
+            <ul className="space-y-2.5">
               {featuredStates.map(loc => (
-                 <li key={loc.id}><a href="#" className="text-sm text-gray-400 hover:text-primary transition-colors">{loc.name}</a></li>
+                <li key={loc.id}>
+                  <a
+                    href="#"
+                    className="text-sm transition-colors"
+                    style={{ color: '#4A6080' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#04D9A5'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#4A6080'; }}
+                  >
+                    {loc.name}
+                  </a>
+                </li>
               ))}
-              <li><span className="text-sm text-gray-600 italic">...y {MEXICO_LOCATIONS.length - featuredStates.length} estados más</span></li>
+              <li>
+                <span className="text-sm italic" style={{ color: '#2A3A52' }}>
+                  ...y {MEXICO_LOCATIONS.length - featuredStates.length} estados más
+                </span>
+              </li>
             </ul>
           </div>
 
+          {/* Company */}
           <div>
-            <h4 className="text-sm font-semibold text-white mb-4">Compañía</h4>
-            <ul className="space-y-2">
-              <li><button onClick={onAboutClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Sobre Nosotros</button></li>
-              <li><button onClick={onBlogClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Blog</button></li>
-              <li><button onClick={onSuggestClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Sugerir nuevo oficio</button></li>
-              <li><button onClick={onContactClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Contacto</button></li>
+            <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#CDD9EE' }}>
+              Compañía
+            </h4>
+            <ul className="space-y-2.5">
+              <NavLink onClick={onAboutClick}>Sobre Nosotros</NavLink>
+              <NavLink onClick={onBlogClick}>Blog</NavLink>
+              <NavLink onClick={onSuggestClick}>Sugerir nuevo oficio</NavLink>
+              <NavLink onClick={onContactClick}>Contacto</NavLink>
             </ul>
           </div>
 
+          {/* Legal */}
           <div>
-            <h4 className="text-sm font-semibold text-white mb-4">Legal</h4>
-            <ul className="space-y-2">
-              <li><button onClick={onPrivacyClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Aviso de Privacidad</button></li>
-              <li><button onClick={onTermsClick} className="text-sm text-gray-400 hover:text-primary transition-colors text-left">Términos y Condiciones</button></li>
+            <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#CDD9EE' }}>
+              Legal
+            </h4>
+            <ul className="space-y-2.5">
+              <NavLink onClick={onPrivacyClick}>Aviso de Privacidad</NavLink>
+              <NavLink onClick={onTermsClick}>Términos y Condiciones</NavLink>
             </ul>
           </div>
         </div>
-        
-        <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-gray-600">
-            © 2024 EsMiOficio. Hecho con orgullo para México.
+
+        {/* Bottom bar */}
+        <div
+          className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+          style={{ borderTop: '1px solid rgba(30,51,86,0.50)' }}
+        >
+          <p className="text-xs" style={{ color: '#2A3A52' }}>
+            © 2025 EsMiOficio. Hecho con orgullo para México.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             <a
               href="mailto:esmioficiomx@gmail.com"
-              className="text-sm text-gray-400 hover:text-primary transition-colors"
+              className="text-sm transition-colors"
+              style={{ color: '#4A6080' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#04D9A5'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#4A6080'; }}
             >
               esmioficiomx@gmail.com
             </a>
@@ -100,9 +153,26 @@ const Footer: React.FC<FooterProps> = ({ onSuggestClick, onPrivacyClick, onTerms
                   rel="noopener noreferrer"
                   aria-label={social.name}
                   title={social.name}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-light border border-border text-gray-400 hover:text-primary hover:border-primary/50 transition-colors"
+                  className="flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200"
+                  style={{
+                    background: 'rgba(21,34,64,0.6)',
+                    border: '1px solid rgba(30,51,86,0.8)',
+                    color: '#4A6080',
+                  }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLAnchorElement;
+                    el.style.color = '#04D9A5';
+                    el.style.borderColor = 'rgba(4,217,165,0.30)';
+                    el.style.background = 'rgba(4,217,165,0.07)';
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLAnchorElement;
+                    el.style.color = '#4A6080';
+                    el.style.borderColor = 'rgba(30,51,86,0.8)';
+                    el.style.background = 'rgba(21,34,64,0.6)';
+                  }}
                 >
-                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
                     <path d={social.path} />
                   </svg>
                 </a>
