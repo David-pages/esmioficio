@@ -94,6 +94,5 @@ Cuando Supabase no esta configurado, el entorno local usa los profesionales de e
 ├── lib/                 # Lógica: supabase, confianza, analítica, métricas
 ├── e2e/                 # Pruebas end-to-end con Playwright
 ├── public/              # Estáticos (robots.txt, sitemap, redirects)
-├── supabase-*.sql       # Esquemas y políticas de la base de datos
-└── entredos/            # Proyecto separado (app Next.js independiente)
+└── supabase-*.sql       # Esquemas y políticas de la base de datos
 ```

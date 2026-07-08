@@ -14,27 +14,40 @@ module.exports = {
         sans: ['Inter', 'sans-serif'],
       },
       colors: {
-        primary: '#3B82F6',
-        'primary-hover': '#60A5FA',
-        background: '#08111F',
-        surface: '#0F1B2D',
-        'surface-light': '#17263B',
-        border: '#2C4162',
-      },
-      keyframes: {
-        'fade-in': {
-          from: { opacity: '0' },
-          to: { opacity: '1' }
-        },
-        'fade-in-up': {
-          from: { opacity: '0', transform: 'translateY(18px)' },
-          to: { opacity: '1', transform: 'translateY(0)' }
-        }
+        primary: '#04D9A5',
+        'primary-hover': '#00C496',
+        'aurora-violet': '#7B4FD4',
+        'aurora-rose': '#E04B8A',
+        'aurora-gold': '#F0A832',
+        background: '#070C1A',
+        surface: '#0D1830',
+        'surface-light': '#152240',
+        border: '#1E3356',
       },
       animation: {
-        'fade-in': 'fade-in 0.6s ease-out both',
-        'fade-in-up': 'fade-in-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both'
-      }
+        'aurora-drift': 'aurora-drift 22s ease-in-out infinite alternate',
+        'aurora-drift-2': 'aurora-drift-2 28s ease-in-out infinite alternate',
+        'aurora-pulse': 'aurora-pulse 4s ease-in-out infinite',
+        'fade-in': 'fade-in 0.5s ease-out both',
+      },
+      keyframes: {
+        'aurora-drift': {
+          '0%': { transform: 'translate(0, 0) scale(1)' },
+          '100%': { transform: 'translate(70px, -50px) scale(1.18)' },
+        },
+        'aurora-drift-2': {
+          '0%': { transform: 'translate(0, 0) scale(1.05)' },
+          '100%': { transform: 'translate(-55px, 65px) scale(0.90)' },
+        },
+        'aurora-pulse': {
+          '0%, 100%': { opacity: '0.45' },
+          '50%': { opacity: '0.80' },
+        },
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
     }
   },
   safelist: [

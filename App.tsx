@@ -23,6 +23,7 @@ const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const TermsConditions = lazy(() => import('./components/TermsConditions'));
 const AboutUs = lazy(() => import('./components/AboutUs'));
+const Contact = lazy(() => import('./components/Contact'));
 const Blog = lazy(() => import('./components/Blog'));
 const JobBoard = lazy(() => import('./components/JobBoard'));
 const UpdatePassword = lazy(() => import('./components/UpdatePassword'));
@@ -274,6 +275,7 @@ const App: React.FC = () => {
       case 'PRIVACY': navigate('/privacidad'); break;
       case 'TERMS': navigate('/terminos'); break;
       case 'ABOUT': navigate('/nosotros'); break;
+      case 'CONTACT_PAGE': navigate('/contacto'); break;
       case 'BLOG': navigate('/blog'); break;
       case 'CONTACT': navigate('/contacto'); break;
       case 'CLIENT_DASHBOARD': navigate('/mi-actividad'); break;

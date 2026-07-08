@@ -10,6 +10,47 @@ import { getLastActiveText } from '../lib/trust';
 import { getAbsoluteUrl } from '../lib/siteUrl';
 import { getSearchIntentTrades, matchesSearchIntent, normalizeSearchText } from '../lib/searchIntents';
 
+// Quita acentos y pasa a minúsculas para comparar de forma flexible.
+const normalizeSearch = (value: string) => (value || '')
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[̀-ͯ]/g, '');
+
+// Palabras vacías que no aportan al matching de oficios.
+const SEARCH_STOPWORDS = new Set([
+  'de', 'la', 'el', 'los', 'las', 'un', 'una', 'unos', 'unas', 'en', 'para',
+  'por', 'con', 'y', 'o', 'a', 'al', 'del', 'mi', 'tu', 'su', 'me', 'que',
+  'urgente', 'cerca', 'casa', 'hogar', 'servicio', 'servicios', 'necesito', 'busco'
+]);
+
+// Sinónimos / necesidades comunes mapeadas al nombre del oficio que las resuelve.
+// Permite que "fuga de agua" encuentre plomeros, "apagón" encuentre electricistas, etc.
+const NEED_SYNONYMS: Record<string, string[]> = {
+  plomero: ['fuga', 'fugas', 'agua', 'tuberia', 'tuberias', 'drenaje', 'goteo', 'tinaco', 'bomba', 'sanitario', 'wc', 'cisterna', 'plomeria', 'destapar', 'coladera'],
+  electricista: ['apagon', 'electrico', 'electrica', 'corto', 'cortocircuito', 'luz', 'foco', 'contacto', 'cableado', 'breaker', 'pastilla', 'electricidad', 'instalacion'],
+  pintor: ['pintura', 'pintar', 'pared', 'paredes', 'muro', 'muros', 'fachada', 'barniz'],
+  impermeabilizador: ['impermeabilizar', 'impermeabilizacion', 'gotera', 'goteras', 'filtracion', 'humedad', 'techo', 'azotea', 'impermeabilizante'],
+  carpintero: ['mueble', 'muebles', 'madera', 'closet', 'closets', 'puerta', 'puertas', 'carpinteria'],
+  albanil: ['construccion', 'obra', 'ladrillo', 'cemento', 'yeso', 'barda', 'firme', 'aplanado', 'albanileria'],
+  mecanico: ['carro', 'auto', 'coche', 'motor', 'frenos', 'clutch', 'afinacion', 'mecanica'],
+  jardinero: ['jardin', 'pasto', 'poda', 'podar', 'cesped', 'arbol', 'arboles', 'jardineria'],
+  cerrajero: ['cerradura', 'chapa', 'candado', 'cerrajeria'],
+  fumigador: ['plaga', 'plagas', 'insecto', 'insectos', 'cucaracha', 'cucarachas', 'fumigar', 'fumigacion'],
+  herrero: ['herreria', 'porton', 'reja', 'rejas', 'soldar', 'metal', 'estructura'],
+  vidriero: ['vidrio', 'ventana', 'ventanas', 'cristal', 'cancel'],
+  cocinero: ['cocinar', 'banquete', 'comida', 'chef'],
+};
+
+// Construye la lista invertida: palabra-necesidad -> oficio sugerido.
+const SYNONYM_TO_TRADE: Record<string, string[]> = Object.entries(NEED_SYNONYMS)
+  .reduce((acc, [trade, words]) => {
+    words.forEach(word => {
+      if (!acc[word]) acc[word] = [];
+      acc[word].push(trade);
+    });
+    return acc;
+  }, {} as Record<string, string[]>);
+
 interface SearchResultsProps {
   filters: SearchFilters;
   onViewProfile: (proId: string) => void;
@@ -103,7 +144,21 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       ...(pro.services || []),
       ...(pro.coverageZones || [])
     ].join(' ');
-    const matchesQuery = !query || matchesSearchIntent(query, searchableText);
+
+    const queryTerms = query
+      .split(/\s+/)
+      .map(term => term.trim())
+      .filter(term => term.length >= 3 && !SEARCH_STOPWORDS.has(term));
+
+    const expandedTerms = new Set<string>();
+    queryTerms.forEach(term => {
+      expandedTerms.add(term);
+      (SYNONYM_TO_TRADE[term] || []).forEach(trade => expandedTerms.add(trade));
+    });
+
+    const matchesQuery = !query
+      || expandedTerms.size === 0
+      || Array.from(expandedTerms).some(term => searchableText.includes(term));
     
     const stateData = MEXICO_LOCATIONS.find(s => s.id === localFilters.state);
     const matchesState = localFilters.state === 'all' || 
