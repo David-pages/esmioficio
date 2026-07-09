@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agenda de Créditos — Renovaciones</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%92%3C/text%3E%3C/svg%3E" />
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --ink: #1c2733;
+    --muted: #5b6b7b;
+    --line: #e3e8ee;
+    --accent: #0b7a5c;
+    --accent-soft: #e2f3ed;
+    --warn: #b45309;
+    --warn-soft: #fef3c7;
+    --info: #1d4ed8;
+    --info-soft: #dbeafe;
+    --danger: #b91c1c;
+    --danger-soft: #fee2e2;
+    --purple: #6d28d9;
+    --purple-soft: #ede9fe;
+    --radius: 14px;
+    --shadow: 0 1px 3px rgba(16,24,40,.08), 0 1px 2px rgba(16,24,40,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.45;
+    padding-bottom: 90px;
+  }
+  header {
+    background: linear-gradient(135deg, #0b7a5c, #0a5c46);
+    color: #fff; padding: 18px 20px 14px;
+  }
+  header h1 { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  header p { font-size: .8rem; opacity: .85; margin-top: 2px; }
+  nav {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; gap: 4px; padding: 8px 12px;
+    background: #fff; border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+  }
+  nav button {
+    border: none; background: transparent; color: var(--muted);
+    font-size: .88rem; font-weight: 600; padding: 8px 14px;
+    border-radius: 999px; cursor: pointer; white-space: nowrap;
+  }
+  nav button.active { background: var(--accent-soft); color: var(--accent); }
+  nav button .badge {
+    display: inline-block; min-width: 20px; padding: 0 6px; margin-left: 4px;
+    background: var(--danger); color: #fff; border-radius: 999px;
+    font-size: .7rem; line-height: 20px; text-align: center;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 16px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 16px; margin-bottom: 14px;
+  }
+  .card h2 { font-size: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .stat {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 14px;
+  }
+  .stat .num { font-size: 1.7rem; font-weight: 800; }
+  .stat .lbl { font-size: .78rem; color: var(--muted); font-weight: 600; }
+  .stat.hot .num { color: var(--warn); }
+  .stat.ok .num { color: var(--accent); }
+  .stat.blue .num { color: var(--info); }
+  .pill {
+    display: inline-block; font-size: .72rem; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px; white-space: nowrap;
+  }
+  .pill.contactar { background: var(--warn-soft); color: var(--warn); }
+  .pill.espera { background: var(--info-soft); color: var(--info); }
+  .pill.cita { background: var(--purple-soft); color: var(--purple); }
+  .pill.curso { background: #eef1f4; color: var(--muted); }
+  .pill.liquidado { background: var(--accent-soft); color: var(--accent); }
+  .pill.nointeresa { background: var(--danger-soft); color: var(--danger); }
+  .cliente {
+    border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px; margin-bottom: 10px; background: #fff;
+  }
+  .cliente.destacado { border-color: #f2c86b; background: #fffdf5; }
+  .cliente .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+  .cliente .nombre { font-weight: 700; font-size: .98rem; }
+  .cliente .meta { font-size: .8rem; color: var(--muted); margin-top: 2px; }
+  .cliente .meta b { color: var(--ink); }
+  .barra { height: 8px; background: #eef1f4; border-radius: 999px; margin: 10px 0 4px; overflow: hidden; }
+  .barra > div { height: 100%; border-radius: 999px; background: var(--info); transition: width .3s; }
+  .barra > div.lista { background: var(--warn); }
+  .barra > div.completa { background: var(--accent); }
+  .barra-lbl { font-size: .75rem; color: var(--muted); display: flex; justify-content: space-between; }
+  .acciones { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  button.btn {
+    border: 1px solid var(--line); background: #fff; color: var(--ink);
+    font-size: .8rem; font-weight: 600; padding: 7px 12px;
+    border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+  }
+  button.btn:hover { background: #f7f9fa; }
+  button.btn.wa { background: #25d366; border-color: #25d366; color: #fff; }
+  button.btn.wa:hover { background: #1fb857; }
+  button.btn.primario { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.btn.primario:hover { background: #0a6b51; }
+  button.btn.morado { background: var(--purple); border-color: var(--purple); color: #fff; }
+  button.btn.peligro { color: var(--danger); border-color: #f3c1c1; }
+  button.btn.chico { font-size: .74rem; padding: 5px 9px; }
+  .filtros { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .filtros button {
+    border: 1px solid var(--line); background: #fff; color: var(--muted);
+    font-size: .76rem; font-weight: 600; padding: 5px 11px; border-radius: 999px; cursor: pointer;
+  }
+  .filtros button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  input, select, textarea {
+    width: 100%; padding: 10px 12px; font-size: .92rem;
+    border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink);
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+  label { font-size: .78rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 4px; }
+  .campo { margin-bottom: 12px; }
+  .fila { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 520px) { .fila { grid-template-columns: 1fr; } }
+  .ayuda { font-size: .73rem; color: var(--muted); margin-top: 3px; }
+  .modal-fondo {
+    position: fixed; inset: 0; background: rgba(15,23,32,.5);
+    display: flex; align-items: flex-end; justify-content: center; z-index: 100;
+    padding: 0;
+  }
+  @media (min-width: 560px) { .modal-fondo { align-items: center; padding: 20px; } }
+  .modal {
+    background: #fff; border-radius: 18px 18px 0 0; width: 100%; max-width: 560px;
+    max-height: 92vh; overflow-y: auto; padding: 20px;
+  }
+  @media (min-width: 560px) { .modal { border-radius: 18px; } }
+  .modal h3 { font-size: 1.05rem; margin-bottom: 14px; }
+  .modal .pie { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .vacio { text-align: center; color: var(--muted); font-size: .85rem; padding: 24px 10px; }
+  .fab {
+    position: fixed; right: 18px; bottom: 18px; z-index: 50;
+    background: var(--accent); color: #fff; border: none; cursor: pointer;
+    width: 58px; height: 58px; border-radius: 999px; font-size: 1.7rem;
+    box-shadow: 0 6px 16px rgba(11,122,92,.4);
+  }
+  .aviso {
+    background: var(--warn-soft); border: 1px solid #f2d288; color: #7c4a03;
+    border-radius: var(--radius); padding: 12px 14px; font-size: .82rem; margin-bottom: 14px;
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .cita-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 12px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .fecha-grupo { font-size: .8rem; font-weight: 800; color: var(--accent); margin: 14px 0 8px; text-transform: capitalize; }
+  .buscador { margin-bottom: 12px; }
+  .toast {
+    position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%);
+    background: var(--ink); color: #fff; font-size: .84rem; font-weight: 600;
+    padding: 10px 18px; border-radius: 999px; z-index: 200; box-shadow: var(--shadow);
+    opacity: 0; transition: opacity .25s; pointer-events: none;
+  }
+  .toast.ver { opacity: 1; }
+  .hist { font-size: .75rem; color: var(--muted); margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📒 Agenda de Créditos</h1>
+  <p>Renovaciones, seguimiento y citas de tus clientes de crédito</p>
+</header>
+
+<nav id="nav">
+  <button data-tab="panel" class="active">Panel<span id="badge-panel" class="badge" style="display:none"></span></button>
+  <button data-tab="clientes">Clientes</button>
+  <button data-tab="agenda">Agenda</button>
+  <button data-tab="ajustes">Ajustes</button>
+</nav>
+
+<main>
+  <section id="tab-panel"></section>
+  <section id="tab-clientes" style="display:none"></section>
+  <section id="tab-agenda" style="display:none"></section>
+  <section id="tab-ajustes" style="display:none"></section>
+</main>
+
+<button class="fab" title="Registrar cliente" onclick="abrirFormCliente()">＋</button>
+<div id="toast" class="toast"></div>
+<div id="modales"></div>
+
+<script>
+"use strict";
+
+/* ============ Datos y persistencia ============ */
+const CLAVE = "agenda-creditos-v1";
+const PLAZOS = [13, 26, 39, 52, 80, 100, 110, 120, 128, 142, 154];
+const UMBRAL_RENOVACION = 30; // % de avance donde se ofrece la renovación
+
+const PLANTILLA_RENOVACION_DEF =
+  "Hola {nombre} 👋, le saluda su asesor(a) de crédito. ¡Felicidades por el avance en sus pagos! " +
+  "Ya cumple con el avance necesario para *renovar su crédito*{disponible_texto}. " +
+  "¿Le gustaría que agendemos una cita para tramitarlo? Quedo al pendiente 😊";
+
+const PLANTILLA_LIQUIDADO_DEF =
+  "Hola {nombre} 👋, le saluda su asesor(a) de crédito. ¡Muchas felicidades, ya terminó de pagar su crédito! 🎉 " +
+  "Por su excelente historial tiene disponible un *nuevo crédito*{disponible_texto}. " +
+  "¿Le interesa tramitarlo? Con gusto le agendo una cita 😊";
+
+let estado = cargar();
+
+function cargar() {
+  try {
+    const raw = localStorage.getItem(CLAVE);
+    if (raw) return JSON.parse(raw);
+  } catch (e) { /* datos corruptos: empezar de cero */ }
+  return {
+    clientes: [semillaEjemplo()],
+    config: {
+      cooldownDias: 14,
+      plantillaRenovacion: PLANTILLA_RENOVACION_DEF,
+      plantillaLiquidado: PLANTILLA_LIQUIDADO_DEF
+    },
+    notificados: {}
+  };
+}
+
+function semillaEjemplo() {
+  const hoyISO = fechaISO(new Date());
+  return {
+    id: "ejemplo-tania",
+    nombre: "Tania Yadira Renedo Cabrera",
+    clienteUnico: "0101-1089-1234",
+    telefono: "4431326702",
+    tipo: "recompra",
+    montoCredito: 30000,
+    plazoSemanas: 52,
+    disponibleRenovacion: 70000,
+    anchorFecha: hoyISO,
+    anchorSemanas: 17,
+    generacion: 1,
+    interes: "sin_definir",
+    ultimoMensaje: null,
+    cita: null,
+    historial: [{ fecha: hoyISO, texto: "Cliente de ejemplo registrado (edítalo o elimínalo)" }],
+    notas: "Cliente de ejemplo. Recompra con crédito disponible de hasta $70,000."
+  };
+}
+
+function guardar() {
+  localStorage.setItem(CLAVE, JSON.stringify(estado));
+}
+
+/* ============ Utilidades ============ */
+const MXN = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
+
+function fechaISO(d) {
+  const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return z.toISOString().slice(0, 10);
+}
+function hoy() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+function desdeISO(iso) { const [a, m, dd] = iso.split("-").map(Number); return new Date(a, m - 1, dd); }
+function fechaBonita(iso) {
+  return desdeISO(iso).toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
+function fechaCorta(iso) {
+  return desdeISO(iso).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" });
+}
+function semanasEntre(aISO, b) {
+  return Math.floor((b.getTime() - desdeISO(aISO).getTime()) / (7 * 86400000));
+}
+function diasEntre(aISO, b) {
+  return Math.floor((b.getTime() - desdeISO(aISO).getTime()) / 86400000);
+}
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function uid() { return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+function telWhatsApp(tel) {
+  let d = String(tel || "").replace(/\D/g, "");
+  if (d.length === 10) d = "52" + d;
+  return d;
+}
+
+/* ============ Cálculos de crédito ============ */
+function semanasPagadas(c) {
+  const avance = c.anchorSemanas + Math.max(0, semanasEntre(c.anchorFecha, hoy()));
+  return Math.min(c.plazoSemanas, Math.max(0, avance));
+}
+function porcentaje(c) {
+  return Math.round((semanasPagadas(c) / c.plazoSemanas) * 1000) / 10;
+}
+function fechaElegible(c) {
+  // fecha estimada en la que cruza el umbral de renovación
+  const semanasObjetivo = Math.ceil(c.plazoSemanas * UMBRAL_RENOVACION / 100);
+  const faltan = semanasObjetivo - c.anchorSemanas;
+  const f = desdeISO(c.anchorFecha);
+  f.setDate(f.getDate() + faltan * 7);
+  return f;
+}
+function enCooldown(c) {
+  if (!c.ultimoMensaje) return false;
+  return diasEntre(c.ultimoMensaje, hoy()) < estado.config.cooldownDias;
+}
+function diasParaRecontactar(c) {
+  return estado.config.cooldownDias - diasEntre(c.ultimoMensaje, hoy());
+}
+function citaVigente(c) {
+  if (!c.cita) return false;
+  return c.cita.fecha >= fechaISO(hoy());
+}
+
+/*
+  Situaciones posibles de un cliente:
+  - cita        → interesado, con cita agendada
+  - nointeresa  → marcó que no le interesa (no volver a contactar este ciclo)
+  - liquidado   → 100% pagado: ofrecer crédito nuevo
+  - contactar   → llegó al 30% y no tiene mensaje reciente
+  - espera      → se le mandó mensaje hace poco (no hostigar)
+  - curso       → aún no llega al 30%
+*/
+function situacion(c) {
+  if (citaVigente(c)) return "cita";
+  if (c.interes === "no_interesado") return "nointeresa";
+  const pct = porcentaje(c);
+  if (pct >= 100) return enCooldown(c) ? "espera" : "liquidado";
+  if (pct >= UMBRAL_RENOVACION) return enCooldown(c) ? "espera" : "contactar";
+  return "curso";
+}
+
+const ETIQUETAS = {
+  contactar: ["Por contactar", "contactar"],
+  espera: ["Mensaje enviado — en espera", "espera"],
+  cita: ["Cita agendada", "cita"],
+  curso: ["En curso", "curso"],
+  liquidado: ["Liquidado — crédito nuevo", "liquidado"],
+  nointeresa: ["No interesado", "nointeresa"]
+};
+
+/* ============ Mensajes de WhatsApp ============ */
+function mensajePara(c) {
+  const pct = porcentaje(c);
+  const plantilla = pct >= 100 ? estado.config.plantillaLiquidado : estado.config.plantillaRenovacion;
+  const dispTexto = c.disponibleRenovacion
+    ? " de hasta *" + MXN.format(c.disponibleRenovacion) + "*"
+    : "";
+  return plantilla
+    .replaceAll("{nombre}", primerNombre(c.nombre))
+    .replaceAll("{disponible_texto}", dispTexto)
+    .replaceAll("{disponible}", c.disponibleRenovacion ? MXN.format(c.disponibleRenovacion) : "");
+}
+function primerNombre(n) { return String(n || "").trim().split(/\s+/)[0] || ""; }
+
+function enviarWhatsApp(id) {
+  const c = buscarCliente(id);
+  if (!c) return;
+  const num = telWhatsApp(c.telefono);
+  if (num.length < 12) { toast("Revisa el teléfono del cliente (deben ser 10 dígitos)"); return; }
+  const url = "https://wa.me/" + num + "?text=" + encodeURIComponent(mensajePara(c));
+  window.open(url, "_blank");
+  c.ultimoMensaje = fechaISO(hoy());
+  c.historial.push({ fecha: c.ultimoMensaje, texto: "Se envió mensaje de WhatsApp" });
+  guardar(); render();
+  toast("Mensaje registrado. No se volverá a sugerir por " + estado.config.cooldownDias + " días.");
+}
+
+/* ============ Notificaciones ============ */
+function pedirPermisoNotificaciones() {
+  if (!("Notification" in window)) { toast("Este navegador no soporta notificaciones"); return; }
+  Notification.requestPermission().then(() => render());
+}
+
+function revisarNotificaciones() {
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  for (const c of estado.clientes) {
+    const s = situacion(c);
+    if (s !== "contactar" && s !== "liquidado") continue;
+    const clave = c.id + ":g" + (c.generacion || 1) + ":" + (s === "liquidado" ? "100" : "30");
+    if (estado.notificados[clave]) continue;
+    estado.notificados[clave] = fechaISO(hoy());
+    const cuerpo = s === "liquidado"
+      ? c.nombre + " terminó de pagar su crédito. Ofrécele un crédito nuevo" +
+        (c.disponibleRenovacion ? " de hasta " + MXN.format(c.disponibleRenovacion) : "") + "."
+      : c.nombre + " ya lleva " + porcentaje(c) + "% de avance. ¡Es momento de ofrecerle la renovación!";
+    try {
+      new Notification(s === "liquidado" ? "🎉 Crédito liquidado" : "🔔 Cliente listo para renovar", { body: cuerpo });
+    } catch (e) { /* algunos móviles requieren service worker; el panel lo muestra igual */ }
+  }
+  guardar();
+}
+
+/* ============ Render general ============ */
+let tabActiva = "panel";
+let filtroClientes = "todos";
+let textoBusqueda = "";
+
+document.getElementById("nav").addEventListener("click", e => {
+  const b = e.target.closest("button[data-tab]");
+  if (!b) return;
+  tabActiva = b.dataset.tab;
+  document.querySelectorAll("#nav button").forEach(x => x.classList.toggle("active", x === b));
+  render();
+});
+
+function render() {
+  ["panel", "clientes", "agenda", "ajustes"].forEach(t => {
+    document.getElementById("tab-" + t).style.display = t === tabActiva ? "" : "none";
+  });
+  if (tabActiva === "panel") renderPanel();
+  if (tabActiva === "clientes") renderClientes();
+  if (tabActiva === "agenda") renderAgenda();
+  if (tabActiva === "ajustes") renderAjustes();
+  renderBadge();
+}
+
+function renderBadge() {
+  const n = estado.clientes.filter(c => ["contactar", "liquidado"].includes(situacion(c))).length;
+  const b = document.getElementById("badge-panel");
+  b.style.display = n ? "" : "none";
+  b.textContent = n;
+}
+
+/* ============ Panel ============ */
+function renderPanel() {
+  const porContactar = estado.clientes.filter(c => situacion(c) === "contactar");
+  const liquidados = estado.clientes.filter(c => situacion(c) === "liquidado");
+  const enEspera = estado.clientes.filter(c => situacion(c) === "espera");
+  const proximasCitas = citasOrdenadas().filter(x => x.c.cita.fecha >= fechaISO(hoy())).slice(0, 5);
+
+  let avisoNotif = "";
+  if ("Notification" in window && Notification.permission !== "granted") {
+    avisoNotif = `
+      <div class="aviso">
+        <span>🔔 Activa las notificaciones para enterarte cuando un cliente llegue al ${UMBRAL_RENOVACION}% de avance o liquide su crédito.</span>
+        <button class="btn primario chico" onclick="pedirPermisoNotificaciones()">Activar notificaciones</button>
+      </div>`;
+  }
+
+  const listos = [...liquidados, ...porContactar];
+
+  document.getElementById("tab-panel").innerHTML = `
+    ${avisoNotif}
+    <div class="stats">
+      <div class="stat hot"><div class="num">${porContactar.length + liquidados.length}</div><div class="lbl">Por contactar</div></div>
+      <div class="stat blue"><div class="num">${enEspera.length}</div><div class="lbl">En espera (ya contactados)</div></div>
+      <div class="stat ok"><div class="num">${proximasCitas.length}</div><div class="lbl">Citas próximas</div></div>
+      <div class="stat"><div class="num">${estado.clientes.length}</div><div class="lbl">Clientes registrados</div></div>
+    </div>
+
+    <div class="card">
+      <h2>🔥 Listos para renovar o crédito nuevo</h2>
+      ${listos.length ? listos.map(c => tarjetaCliente(c, true)).join("") :
+        `<div class="vacio">Nadie por contactar hoy. Los clientes aparecerán aquí al llegar al ${UMBRAL_RENOVACION}% de avance o al liquidar.</div>`}
+    </div>
+
+    <div class="card">
+      <h2>📅 Próximas citas</h2>
+      ${proximasCitas.length ? proximasCitas.map(x => filaCita(x.c)).join("") :
+        `<div class="vacio">Sin citas agendadas.</div>`}
+    </div>
+  `;
+}
+
+/* ============ Clientes ============ */
+function renderClientes() {
+  const filtros = [
+    ["todos", "Todos"],
+    ["contactar", "Por contactar"],
+    ["espera", "En espera"],
+    ["cita", "Con cita"],
+    ["curso", "En curso"],
+    ["liquidado", "Liquidados"],
+    ["nointeresa", "No interesados"]
+  ];
+  let lista = estado.clientes.slice();
+  if (filtroClientes !== "todos") lista = lista.filter(c => situacion(c) === filtroClientes);
+  if (textoBusqueda) {
+    const q = textoBusqueda.toLowerCase();
+    lista = lista.filter(c =>
+      c.nombre.toLowerCase().includes(q) ||
+      (c.clienteUnico || "").toLowerCase().includes(q) ||
+      (c.telefono || "").includes(q));
+  }
+  const orden = { liquidado: 0, contactar: 1, cita: 2, espera: 3, curso: 4, nointeresa: 5 };
+  lista.sort((a, b) => orden[situacion(a)] - orden[situacion(b)] || porcentaje(b) - porcentaje(a));
+
+  document.getElementById("tab-clientes").innerHTML = `
+    <div class="buscador">
+      <input type="search" placeholder="🔍 Buscar por nombre, cliente único o teléfono…" value="${esc(textoBusqueda)}"
+        oninput="textoBusqueda=this.value; renderSoloLista()">
+    </div>
+    <div class="filtros">
+      ${filtros.map(([v, t]) => `<button class="${filtroClientes === v ? "on" : ""}" onclick="filtroClientes='${v}';render()">${t}</button>`).join("")}
+    </div>
+    <div id="lista-clientes">
+      ${lista.length ? lista.map(c => tarjetaCliente(c, false)).join("") : `<div class="card vacio">No hay clientes con este filtro.</div>`}
+    </div>
+  `;
+}
+
+function renderSoloLista() {
+  // conserva el foco del buscador mientras se escribe
+  const cont = document.getElementById("lista-clientes");
+  if (!cont) return;
+  let lista = estado.clientes.slice();
+  if (filtroClientes !== "todos") lista = lista.filter(c => situacion(c) === filtroClientes);
+  if (textoBusqueda) {
+    const q = textoBusqueda.toLowerCase();
+    lista = lista.filter(c =>
+      c.nombre.toLowerCase().includes(q) ||
+      (c.clienteUnico || "").toLowerCase().includes(q) ||
+      (c.telefono || "").includes(q));
+  }
+  cont.innerHTML = lista.length ? lista.map(c => tarjetaCliente(c, false)).join("") : `<div class="card vacio">Sin resultados.</div>`;
+}
+
+function tarjetaCliente(c, compacta) {
+  const s = situacion(c);
+  const [etiqueta, clase] = ETIQUETAS[s];
+  const pct = porcentaje(c);
+  const pagadas = semanasPagadas(c);
+  const claseBarra = pct >= 100 ? "completa" : (pct >= UMBRAL_RENOVACION ? "lista" : "");
+  const destacado = (s === "contactar" || s === "liquidado") ? "destacado" : "";
+
+  let detalleEstado = "";
+  if (s === "curso") {
+    detalleEstado = `<div class="ayuda">Se podrá ofrecer renovación aprox. el <b>${fechaCorta(fechaISO(fechaElegible(c)))}</b> (al ${UMBRAL_RENOVACION}%).</div>`;
+  } else if (s === "espera") {
+    detalleEstado = `<div class="ayuda">Mensaje enviado el ${fechaCorta(c.ultimoMensaje)}. Recontactar en <b>${diasParaRecontactar(c)} día(s)</b> para no hostigar.</div>`;
+  } else if (s === "cita") {
+    detalleEstado = `<div class="ayuda">Cita: <b>${fechaCorta(c.cita.fecha)} ${c.cita.hora || ""}</b>${c.cita.nota ? " — " + esc(c.cita.nota) : ""}</div>`;
+  }
+
+  const historial = !compacta && c.historial.length ? `
+    <div class="hist">Último movimiento: ${fechaCorta(c.historial[c.historial.length - 1].fecha)} — ${esc(c.historial[c.historial.length - 1].texto)}</div>` : "";
+
+  return `
+  <div class="cliente ${destacado}">
+    <div class="top">
+      <div>
+        <div class="nombre">${esc(c.nombre)}</div>
+        <div class="meta">
+          ${c.clienteUnico ? `Cliente único: <b>${esc(c.clienteUnico)}</b> · ` : ""}
+          📞 <b>${esc(c.telefono)}</b> · ${c.tipo === "recompra" ? "Recompra" : "Cliente nuevo"}
+        </div>
+        <div class="meta">
+          Crédito: <b>${MXN.format(c.montoCredito)}</b> a <b>${c.plazoSemanas} semanas</b>
+          ${c.disponibleRenovacion ? ` · Disponible: <b>${MXN.format(c.disponibleRenovacion)}</b>` : ""}
+        </div>
+      </div>
+      <span class="pill ${clase}">${etiqueta}</span>
+    </div>
+    <div class="barra"><div class="${claseBarra}" style="width:${Math.min(100, pct)}%"></div></div>
+    <div class="barra-lbl"><span>${pagadas} de ${c.plazoSemanas} semanas</span><span><b>${pct}%</b></span></div>
+    ${detalleEstado}
+    <div class="acciones">
+      <button class="btn wa chico" onclick="enviarWhatsApp('${c.id}')">💬 WhatsApp</button>
+      <button class="btn morado chico" onclick="abrirFormCita('${c.id}')">📅 ${citaVigente(c) ? "Cambiar cita" : "Agendar cita"}</button>
+      ${pct >= 100 || s === "contactar" || s === "cita" || s === "espera" ? `<button class="btn primario chico" onclick="abrirFormRenovacion('${c.id}')">✔ Renovó / crédito nuevo</button>` : ""}
+      ${s === "nointeresa"
+        ? `<button class="btn chico" onclick="marcarInteres('${c.id}','sin_definir')">↩ Reactivar</button>`
+        : `<button class="btn chico" onclick="marcarInteres('${c.id}','no_interesado')">✖ No le interesa</button>`}
+      ${compacta ? "" : `
+        <button class="btn chico" onclick="abrirFormCliente('${c.id}')">✏️ Editar</button>
+        <button class="btn peligro chico" onclick="eliminarCliente('${c.id}')">🗑</button>`}
+    </div>
+    ${historial}
+  </div>`;
+}
+
+function buscarCliente(id) { return estado.clientes.find(c => c.id === id); }
+
+function marcarInteres(id, valor) {
+  const c = buscarCliente(id); if (!c) return;
+  c.interes = valor;
+  if (valor === "no_interesado") {
+    c.cita = null;
+    c.historial.push({ fecha: fechaISO(hoy()), texto: "Marcado como no interesado" });
+  } else {
+    c.historial.push({ fecha: fechaISO(hoy()), texto: "Reactivado para seguimiento" });
+  }
+  guardar(); render();
+}
+
+function eliminarCliente(id) {
+  const c = buscarCliente(id); if (!c) return;
+  if (!confirm("¿Eliminar a " + c.nombre + "? Esta acción no se puede deshacer.")) return;
+  estado.clientes = estado.clientes.filter(x => x.id !== id);
+  guardar(); render();
+  toast("Cliente eliminado");
+}
+
+/* ============ Formulario de cliente ============ */
+function abrirFormCliente(id) {
+  const c = id ? buscarCliente(id) : null;
+  const hoyStr = fechaISO(hoy());
+  modal(`
+    <h3>${c ? "Editar cliente" : "Registrar cliente"}</h3>
+    <form id="form-cliente" onsubmit="return guardarCliente(event, '${id || ""}')">
+      <div class="campo">
+        <label>Nombre completo *</label>
+        <input name="nombre" required value="${esc(c?.nombre || "")}" placeholder="Ej. Tania Yadira Renedo Cabrera">
+      </div>
+      <div class="fila">
+        <div class="campo">
+          <label>Cliente único</label>
+          <input name="clienteUnico" value="${esc(c?.clienteUnico || "")}" placeholder="0101-1089-1234">
+        </div>
+        <div class="campo">
+          <label>Teléfono (10 dígitos) *</label>
+          <input name="telefono" required inputmode="numeric" value="${esc(c?.telefono || "")}" placeholder="4431326702">
+        </div>
+      </div>
+      <div class="fila">
+        <div class="campo">
+          <label>Tipo de cliente</label>
+          <select name="tipo">
+            <option value="nuevo" ${c?.tipo !== "recompra" ? "selected" : ""}>Nuevo</option>
+            <option value="recompra" ${c?.tipo === "recompra" ? "selected" : ""}>Recompra</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Crédito disponible para renovar (opcional)</label>
+          <input name="disponibleRenovacion" type="number" min="0" step="any" value="${c?.disponibleRenovacion ?? ""}" placeholder="70000">
+        </div>
+      </div>
+      <div class="fila">
+        <div class="campo">
+          <label>Monto del crédito actual *</label>
+          <input name="montoCredito" type="number" required min="1" step="any" value="${c?.montoCredito ?? ""}" placeholder="30000">
+        </div>
+        <div class="campo">
+          <label>Plazo *</label>
+          <select name="plazoSemanas" required>
+            ${PLAZOS.map(p => `<option value="${p}" ${c?.plazoSemanas === p ? "selected" : ""}>${p} semanas</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="fila">
+        <div class="campo">
+          <label>Fecha de inicio del crédito</label>
+          <input name="fechaInicio" type="date" max="${hoyStr}" value="${c && c.anchorSemanas === 0 ? c.anchorFecha : ""}">
+          <div class="ayuda">Si la capturas, el avance se calcula solo semana a semana.</div>
+        </div>
+        <div class="campo">
+          <label>Avance actual (semanas pagadas)</label>
+          <input name="semanasPagadas" type="number" min="0" step="1" value="${c && c.anchorSemanas > 0 ? semanasPagadas(c) : ""}" placeholder="Ej. 17">
+          <div class="ayuda">Úsalo para créditos que ya van avanzados. A partir de hoy avanza solo cada semana.</div>
+        </div>
+      </div>
+      <div class="campo">
+        <label>Notas</label>
+        <textarea name="notas" rows="2" placeholder="Ej. buena pagadora, prefiere que le llamen por la tarde…">${esc(c?.notas || "")}</textarea>
+      </div>
+      <div class="pie">
+        <button type="button" class="btn" onclick="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn primario">${c ? "Guardar cambios" : "Registrar cliente"}</button>
+      </div>
+    </form>
+  `);
+}
+
+function guardarCliente(ev, id) {
+  ev.preventDefault();
+  const f = new FormData(ev.target);
+  const telDigitos = String(f.get("telefono")).replace(/\D/g, "");
+  if (telDigitos.length !== 10 && telDigitos.length !== 12) {
+    alert("El teléfono debe tener 10 dígitos (o 12 si incluye la lada 52).");
+    return false;
+  }
+  const fechaInicio = f.get("fechaInicio");
+  const semPag = f.get("semanasPagadas");
+  if (!fechaInicio && semPag === "") {
+    alert("Captura la fecha de inicio del crédito o las semanas pagadas actuales.");
+    return false;
+  }
+  const plazo = Number(f.get("plazoSemanas"));
+  let anchorFecha, anchorSemanas;
+  if (semPag !== "" && semPag !== null) {
+    anchorSemanas = Math.min(plazo, Math.max(0, Number(semPag)));
+    anchorFecha = fechaISO(hoy());
+  } else {
+    anchorSemanas = 0;
+    anchorFecha = fechaInicio;
+  }
+  const base = id ? buscarCliente(id) : null;
+  const cliente = {
+    id: id || uid(),
+    nombre: String(f.get("nombre")).trim(),
+    clienteUnico: String(f.get("clienteUnico") || "").trim(),
+    telefono: telDigitos,
+    tipo: f.get("tipo"),
+    montoCredito: Number(f.get("montoCredito")),
+    plazoSemanas: plazo,
+    disponibleRenovacion: f.get("disponibleRenovacion") ? Number(f.get("disponibleRenovacion")) : null,
+    anchorFecha, anchorSemanas,
+    generacion: base?.generacion || 1,
+    interes: base?.interes || "sin_definir",
+    ultimoMensaje: base?.ultimoMensaje || null,
+    cita: base?.cita || null,
+    historial: base?.historial || [],
+    notas: String(f.get("notas") || "").trim()
+  };
+  cliente.historial.push({ fecha: fechaISO(hoy()), texto: id ? "Datos actualizados" : "Cliente registrado" });
+  if (id) {
+    estado.clientes = estado.clientes.map(x => x.id === id ? cliente : x);
+  } else {
+    estado.clientes.push(cliente);
+  }
+  guardar(); cerrarModal(); revisarNotificaciones(); render();
+  toast(id ? "Cliente actualizado" : "Cliente registrado");
+  return false;
+}
+
+/* ============ Citas ============ */
+function abrirFormCita(id) {
+  const c = buscarCliente(id); if (!c) return;
+  modal(`
+    <h3>📅 Agendar cita — ${esc(c.nombre)}</h3>
+    <form onsubmit="return guardarCita(event,'${id}')">
+      <div class="fila">
+        <div class="campo">
+          <label>Fecha *</label>
+          <input name="fecha" type="date" required min="${fechaISO(hoy())}" value="${c.cita?.fecha || ""}">
+        </div>
+        <div class="campo">
+          <label>Hora</label>
+          <input name="hora" type="time" value="${c.cita?.hora || ""}">
+        </div>
+      </div>
+      <div class="campo">
+        <label>Nota</label>
+        <input name="nota" value="${esc(c.cita?.nota || "")}" placeholder="Ej. renovación por $70,000, traer INE">
+      </div>
+      <div class="pie">
+        ${c.cita ? `<button type="button" class="btn peligro" onclick="cancelarCita('${id}')">Cancelar cita</button>` : ""}
+        <button type="button" class="btn" onclick="cerrarModal()">Cerrar</button>
+        <button type="submit" class="btn primario">Guardar cita</button>
+      </div>
+    </form>
+  `);
+}
+
+function guardarCita(ev, id) {
+  ev.preventDefault();
+  const c = buscarCliente(id); if (!c) return false;
+  const f = new FormData(ev.target);
+  c.cita = { fecha: f.get("fecha"), hora: f.get("hora") || "", nota: String(f.get("nota") || "").trim() };
+  c.interes = "interesado";
+  c.historial.push({ fecha: fechaISO(hoy()), texto: "Cita agendada para el " + fechaCorta(c.cita.fecha) + (c.cita.hora ? " " + c.cita.hora : "") });
+  guardar(); cerrarModal(); render();
+  toast("Cita agendada 📅");
+  return false;
+}
+
+function cancelarCita(id) {
+  const c = buscarCliente(id); if (!c) return;
+  c.cita = null;
+  c.historial.push({ fecha: fechaISO(hoy()), texto: "Cita cancelada" });
+  guardar(); cerrarModal(); render();
+}
+
+function citasOrdenadas() {
+  return estado.clientes
+    .filter(c => c.cita)
+    .map(c => ({ c }))
+    .sort((a, b) => (a.c.cita.fecha + (a.c.cita.hora || "")).localeCompare(b.c.cita.fecha + (b.c.cita.hora || "")));
+}
+
+function linkGoogleCalendar(c) {
+  const f = c.cita.fecha.replace(/-/g, "");
+  let inicio, fin;
+  if (c.cita.hora) {
+    const h = c.cita.hora.replace(":", "");
+    const hFin = String(Number(c.cita.hora.slice(0, 2)) + 1).padStart(2, "0") + c.cita.hora.slice(3, 5);
+    inicio = f + "T" + h + "00"; fin = f + "T" + hFin.replace(":", "") + "00";
+  } else {
+    inicio = f; fin = f;
+  }
+  const detalles = "Cliente: " + c.nombre +
+    (c.clienteUnico ? "\nCliente único: " + c.clienteUnico : "") +
+    "\nTel: " + c.telefono +
+    (c.disponibleRenovacion ? "\nDisponible: " + MXN.format(c.disponibleRenovacion) : "") +
+    (c.cita.nota ? "\nNota: " + c.cita.nota : "");
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+    "&text=" + encodeURIComponent("Renovación de crédito — " + c.nombre) +
+    "&dates=" + inicio + "/" + fin +
+    "&details=" + encodeURIComponent(detalles);
+}
+
+function filaCita(c) {
+  return `
+  <div class="cita-item">
+    <div>
+      <b>${esc(c.nombre)}</b>
+      <div class="meta" style="font-size:.78rem;color:var(--muted)">
+        ${fechaCorta(c.cita.fecha)} ${c.cita.hora ? "· " + c.cita.hora + " h" : ""} ${c.cita.nota ? "· " + esc(c.cita.nota) : ""}
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn wa chico" onclick="enviarWhatsApp('${c.id}')">💬</button>
+      <a class="btn chico" style="text-decoration:none" target="_blank" rel="noopener" href="${linkGoogleCalendar(c)}">📆 Google</a>
+      <button class="btn primario chico" onclick="completarCita('${c.id}')">✔ Hecha</button>
+    </div>
+  </div>`;
+}
+
+function completarCita(id) {
+  const c = buscarCliente(id); if (!c) return;
+  c.historial.push({ fecha: fechaISO(hoy()), texto: "Cita realizada (" + fechaCorta(c.cita.fecha) + ")" });
+  c.cita = null;
+  guardar(); render();
+  toast("Cita marcada como realizada. Si renovó, usa “✔ Renovó / crédito nuevo”.");
+}
+
+function renderAgenda() {
+  const citas = citasOrdenadas();
+  const hoyStr = fechaISO(hoy());
+  const futuras = citas.filter(x => x.c.cita.fecha >= hoyStr);
+  const pasadas = citas.filter(x => x.c.cita.fecha < hoyStr);
+
+  let html = `<div class="card"><h2>📅 Agenda de citas</h2>`;
+  if (!futuras.length && !pasadas.length) {
+    html += `<div class="vacio">Sin citas. Agenda una desde la ficha del cliente cuando te diga que le interesa.</div>`;
+  } else {
+    let fechaActual = "";
+    for (const { c } of futuras) {
+      if (c.cita.fecha !== fechaActual) {
+        fechaActual = c.cita.fecha;
+        html += `<div class="fecha-grupo">${fechaBonita(fechaActual)}${fechaActual === hoyStr ? " · HOY" : ""}</div>`;
+      }
+      html += filaCita(c);
+    }
+    if (pasadas.length) {
+      html += `<div class="fecha-grupo" style="color:var(--danger)">⚠ Citas pasadas sin cerrar</div>`;
+      for (const { c } of pasadas) html += filaCita(c);
+    }
+  }
+  html += `</div>`;
+  document.getElementById("tab-agenda").innerHTML = html;
+}
+
+/* ============ Renovación ============ */
+function abrirFormRenovacion(id) {
+  const c = buscarCliente(id); if (!c) return;
+  modal(`
+    <h3>✔ Renovación / crédito nuevo — ${esc(c.nombre)}</h3>
+    <p class="ayuda" style="margin-bottom:12px">
+      Esto cierra el crédito actual (${MXN.format(c.montoCredito)} a ${c.plazoSemanas} sem, ${porcentaje(c)}% pagado)
+      y arranca el seguimiento del crédito nuevo desde cero.
+    </p>
+    <form onsubmit="return guardarRenovacion(event,'${id}')">
+      <div class="fila">
+        <div class="campo">
+          <label>Monto del nuevo crédito *</label>
+          <input name="monto" type="number" required min="1" step="any" value="${c.disponibleRenovacion ?? ""}">
+        </div>
+        <div class="campo">
+          <label>Plazo *</label>
+          <select name="plazo" required>
+            ${PLAZOS.map(p => `<option value="${p}" ${c.plazoSemanas === p ? "selected" : ""}>${p} semanas</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="fila">
+        <div class="campo">
+          <label>Fecha de inicio *</label>
+          <input name="fecha" type="date" required value="${fechaISO(hoy())}">
+        </div>
+        <div class="campo">
+          <label>Nuevo disponible para próxima renovación</label>
+          <input name="disponible" type="number" min="0" step="any" placeholder="Opcional">
+        </div>
+      </div>
+      <div class="pie">
+        <button type="button" class="btn" onclick="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn primario">Registrar renovación</button>
+      </div>
+    </form>
+  `);
+}
+
+function guardarRenovacion(ev, id) {
+  ev.preventDefault();
+  const c = buscarCliente(id); if (!c) return false;
+  const f = new FormData(ev.target);
+  c.historial.push({
+    fecha: fechaISO(hoy()),
+    texto: "Renovó: crédito anterior de " + MXN.format(c.montoCredito) + " → nuevo de " + MXN.format(Number(f.get("monto")))
+  });
+  c.montoCredito = Number(f.get("monto"));
+  c.plazoSemanas = Number(f.get("plazo"));
+  c.anchorFecha = f.get("fecha");
+  c.anchorSemanas = 0;
+  c.disponibleRenovacion = f.get("disponible") ? Number(f.get("disponible")) : null;
+  c.generacion = (c.generacion || 1) + 1;
+  c.tipo = "recompra";
+  c.interes = "sin_definir";
+  c.ultimoMensaje = null;
+  c.cita = null;
+  guardar(); cerrarModal(); render();
+  toast("¡Renovación registrada! 🎉 El seguimiento del nuevo crédito ya está corriendo.");
+  return false;
+}
+
+/* ============ Ajustes ============ */
+function renderAjustes() {
+  const permiso = !("Notification" in window) ? "no disponible" : Notification.permission;
+  document.getElementById("tab-ajustes").innerHTML = `
+    <div class="card">
+      <h2>🔔 Notificaciones</h2>
+      <p class="ayuda" style="margin-bottom:8px">
+        Estado: <b>${permiso === "granted" ? "activadas ✅" : permiso === "denied" ? "bloqueadas por el navegador ❌" : permiso}</b>.
+        Recibirás un aviso cuando un cliente llegue al ${UMBRAL_RENOVACION}% de avance o liquide su crédito
+        (mientras la app esté abierta). El panel siempre muestra la lista aunque no actives notificaciones.
+      </p>
+      ${permiso !== "granted" ? `<button class="btn primario" onclick="pedirPermisoNotificaciones()">Activar notificaciones</button>` : ""}
+    </div>
+
+    <div class="card">
+      <h2>⏳ No hostigar al cliente</h2>
+      <form onsubmit="return guardarAjustes(event)">
+        <div class="campo">
+          <label>Días de espera después de enviar un mensaje</label>
+          <input name="cooldown" type="number" min="1" max="90" value="${estado.config.cooldownDias}">
+          <div class="ayuda">Después de mandar WhatsApp, el cliente pasa a “En espera” y no se vuelve a sugerir hasta que pasen estos días.</div>
+        </div>
+        <div class="campo">
+          <label>Mensaje de renovación (al ${UMBRAL_RENOVACION}% de avance)</label>
+          <textarea name="plantillaRenovacion" rows="4">${esc(estado.config.plantillaRenovacion)}</textarea>
+        </div>
+        <div class="campo">
+          <label>Mensaje de crédito liquidado (crédito nuevo)</label>
+          <textarea name="plantillaLiquidado" rows="4">${esc(estado.config.plantillaLiquidado)}</textarea>
+          <div class="ayuda">Puedes usar <b>{nombre}</b> (primer nombre del cliente) y <b>{disponible_texto}</b> (agrega “de hasta $70,000” si capturaste el monto disponible).</div>
+        </div>
+        <button type="submit" class="btn primario">Guardar ajustes</button>
+        <button type="button" class="btn" onclick="restaurarPlantillas()">Restaurar mensajes originales</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>💾 Respaldo de datos</h2>
+      <p class="ayuda" style="margin-bottom:10px">
+        Tus datos se guardan solo en este navegador/dispositivo. Descarga un respaldo de vez en cuando
+        y guárdalo en un lugar seguro; con él puedes restaurar todo o pasarte a otro dispositivo.
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primario" onclick="exportarDatos()">⬇ Descargar respaldo</button>
+        <label class="btn" style="cursor:pointer">⬆ Restaurar respaldo
+          <input type="file" accept=".json" style="display:none" onchange="importarDatos(this)">
+        </label>
+      </div>
+    </div>
+  `;
+}
+
+function guardarAjustes(ev) {
+  ev.preventDefault();
+  const f = new FormData(ev.target);
+  estado.config.cooldownDias = Math.max(1, Number(f.get("cooldown")) || 14);
+  estado.config.plantillaRenovacion = String(f.get("plantillaRenovacion")).trim() || PLANTILLA_RENOVACION_DEF;
+  estado.config.plantillaLiquidado = String(f.get("plantillaLiquidado")).trim() || PLANTILLA_LIQUIDADO_DEF;
+  guardar(); render();
+  toast("Ajustes guardados");
+  return false;
+}
+
+function restaurarPlantillas() {
+  estado.config.plantillaRenovacion = PLANTILLA_RENOVACION_DEF;
+  estado.config.plantillaLiquidado = PLANTILLA_LIQUIDADO_DEF;
+  guardar(); render();
+  toast("Mensajes restaurados");
+}
+
+function exportarDatos() {
+  const blob = new Blob([JSON.stringify(estado, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "agenda-creditos-respaldo-" + fechaISO(new Date()) + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importarDatos(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const datos = JSON.parse(r.result);
+      if (!Array.isArray(datos.clientes)) throw new Error("formato inválido");
+      if (!confirm("Esto reemplazará los datos actuales (" + estado.clientes.length + " clientes) por los del respaldo (" + datos.clientes.length + " clientes). ¿Continuar?")) return;
+      estado = datos;
+      guardar(); render();
+      toast("Respaldo restaurado ✅");
+    } catch (e) {
+      alert("El archivo no es un respaldo válido de esta agenda.");
+    }
+  };
+  r.readAsText(file);
+  input.value = "";
+}
+
+/* ============ Modal y toast ============ */
+function modal(html) {
+  document.getElementById("modales").innerHTML =
+    `<div class="modal-fondo" onclick="if(event.target===this)cerrarModal()"><div class="modal">${html}</div></div>`;
+}
+function cerrarModal() { document.getElementById("modales").innerHTML = ""; }
+
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("ver");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("ver"), 3200);
+}
+
+/* ============ Arranque ============ */
+render();
+revisarNotificaciones();
+setInterval(() => { revisarNotificaciones(); renderBadge(); }, 60 * 60 * 1000); // revisa cada hora mientras esté abierta
+</script>
+</body>
+</html>
