@@ -1,0 +1,14 @@
+{
+  "name": "Agenda de Créditos",
+  "short_name": "Créditos",
+  "description": "Renovaciones, seguimiento y citas de clientes de crédito",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#0b7a5c",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Agenda de Créditos — Renovaciones</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%92%3C/text%3E%3C/svg%3E" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0b7a5c" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Créditos" />
+<link rel="apple-touch-icon" href="icon-180.png" />
 <style>
   :root {
     --bg: #f4f6f8;
@@ -1022,6 +1029,9 @@ function toast(msg) {
 }
 
 /* ============ Arranque ============ */
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
 render();
 revisarNotificaciones();
 setInterval(() => { revisarNotificaciones(); renderBadge(); }, 60 * 60 * 1000); // revisa cada hora mientras esté abierta

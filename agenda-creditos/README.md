@@ -8,9 +8,29 @@ Es un solo archivo (`index.html`): no necesita instalación, servidor ni interne
 
 ## Cómo usarla
 
-1. Abre `index.html` en tu navegador (doble clic, o súbelo a Netlify/Vercel/GitHub Pages si quieres usarlo desde el celular con una liga).
+1. Abre `index.html` en tu navegador (doble clic, o súbela a Vercel/Netlify/GitHub Pages para usarla desde el celular con una liga).
 2. Activa las notificaciones cuando la app te lo pida.
 3. Registra a tus clientes con el botón **＋**.
+
+## Instalarla en el iPhone (funciona sin internet)
+
+La app es una PWA: se instala como app y después ya no necesita internet.
+
+1. Sube la carpeta a una liga (Vercel/Netlify) o usa la liga ya publicada.
+2. En el iPhone, abre la liga en **Safari** (tiene que ser Safari).
+3. Toca el botón **Compartir** (el cuadrito con la flecha hacia arriba).
+4. Elige **"Agregar a pantalla de inicio"** y confirma.
+5. Listo: aparece el ícono 📒 "Créditos" junto a tus demás apps.
+
+Desde ese momento:
+- Se abre a pantalla completa como cualquier app.
+- **Funciona sin internet** (el service worker guarda la app en el teléfono).
+- Los datos viven **solo en tu iPhone**; no se envían a ningún servidor.
+- Internet solo se usa al abrir el chat de WhatsApp o Google Calendar.
+
+> ⚠️ En iPhone, los datos de la app instalada se guardan aparte de los de Safari.
+> Usa siempre la app instalada (el ícono) para que todo quede en un solo lugar,
+> y descarga respaldos desde Ajustes de vez en cuando.
 
 ## Qué hace
 
