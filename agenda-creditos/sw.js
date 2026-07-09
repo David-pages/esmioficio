@@ -2,7 +2,7 @@
    Sube el número de versión cuando cambies index.html para que
    los teléfonos descarguen la versión nueva. */
 const CACHE = "agenda-creditos-v1";
-const ARCHIVOS = ["./", "./index.html", "./manifest.json", "./icon-180.png", "./icon-512.png"];
+const ARCHIVOS = ["./", "./index.html", "./manifest.json", "./icon-180.png", "./icon-192.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(
